@@ -1,0 +1,84 @@
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:0.12.200'
+    }
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'com.android.support:appcompat-v7:22.2.0'
+    compile 'org.jetbrains.kotlin:kotlin-stdlib:0.12.200'
+    compile 'uk.co.chrisjenx:calligraphy:2.1.0'
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+android {
+    compileSdkVersion 22
+    buildToolsVersion "22.0.1"
+
+    defaultConfig {
+        applicationId "com.sssprog.shoppingliststandalone"
+        minSdkVersion 14
+        targetSdkVersion 22
+        versionCode 18
+        versionName "2.0"
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    signingConfigs {
+        releaseConfig {
+            if (project.hasProperty('storeFile')) {
+                println 'Generating a signed package.'
+                storeFile = file(project.storeFile)
+                keyAlias = project.keyAlias
+                storePassword = project.storePassword
+                keyPassword = project.keyPassword
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.releaseConfig
+            minifyEnabled true
+            proguardFile 'proguard-rules.pro'
+            proguardFile getDefaultProguardFile('proguard-android.txt')
+        }
+
+        debug {
+            minifyEnabled true
+            proguardFile 'proguard-rules.pro'
+            proguardFile getDefaultProguardFile('proguard-android.txt')
+            applicationIdSuffix ".debug"
+        }
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            def file = output.outputFile
+            output.outputFile = new File(file.parent, file.name.replace(".apk", "-" + defaultConfig.versionName + ".apk"))
+        }
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.4'
+}
