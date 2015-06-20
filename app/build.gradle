@@ -2,23 +2,31 @@
 buildscript {
     repositories {
         mavenCentral()
+        maven { url 'https://maven.parse.com/repo' }
     }
     dependencies {
-        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:0.12.200'
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:0.12.+'
+        classpath 'com.parse.tools:gradle:1.+'
+        classpath 'org.jetbrains.kotlin:kotlin-android-extensions:0.12.+'
     }
 }
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'com.parse'
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:22.2.0'
-    compile 'org.jetbrains.kotlin:kotlin-stdlib:0.12.200'
+//    compile 'com.android.support:appcompat-v7:22.2.0'
+    compile 'com.android.support:design:22.2.0'
+    compile 'org.jetbrains.kotlin:kotlin-stdlib:0.12.+'
     compile 'uk.co.chrisjenx:calligraphy:2.1.0'
+    compile 'io.reactivex:rxkotlin:0.22.12'
+    compile 'io.reactivex:rxandroid:0.24.0'
+
     compile fileTree(dir: 'libs', include: ['*.jar'])
 }
 
@@ -64,7 +72,7 @@ android {
         }
 
         debug {
-            minifyEnabled true
+            minifyEnabled false
             proguardFile 'proguard-rules.pro'
             proguardFile getDefaultProguardFile('proguard-android.txt')
             applicationIdSuffix ".debug"
