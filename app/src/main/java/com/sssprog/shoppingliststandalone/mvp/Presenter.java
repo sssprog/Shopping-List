@@ -1,4 +1,4 @@
-package com.sssprog.mvp;
+package com.sssprog.shoppingliststandalone.mvp;
 
 import android.os.Bundle;
 
