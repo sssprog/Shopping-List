@@ -37,4 +37,34 @@ public class ListService {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
+    public Observable<Void> saveItem(final ListModel item) {
+        return Observable.create(new Observable.OnSubscribe<Void>() {
+            @Override
+            public void call(Subscriber<? super Void> subscriber) {
+                try {
+                    item.pin();
+                    subscriber.onCompleted();
+                } catch (ParseException e) {
+                    subscriber.onError(e);
+                }
+            }
+        }).subscribeOn(Api.scheduler())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<Void> deleteItem(final ListModel item) {
+        return Observable.create(new Observable.OnSubscribe<Void>() {
+            @Override
+            public void call(Subscriber<? super Void> subscriber) {
+                try {
+                    item.unpin();
+                    subscriber.onCompleted();
+                } catch (ParseException e) {
+                    subscriber.onError(e);
+                }
+            }
+        }).subscribeOn(Api.scheduler())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
 }

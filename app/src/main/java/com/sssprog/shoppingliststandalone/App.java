@@ -21,9 +21,4 @@ public class App extends Application {
         Api.getInstance().init();
     }
 
-//    public App() {
-//        instance = this;
-//        Prefs.init(this);
-//        Api.getInstance().init();
-//    }
 }

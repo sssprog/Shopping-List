@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="parse_app_id">GjvJB9s1HIfxOcoWUSae2jq571DMfTkDGgIdIK6r</string>
-    <string name="parse_client_key">4x5zWMQgvjPuoICaZlNPa285mxBm1kf1iksGdVDV</string>
+    <string name="parse_app_id" translatable="false">GjvJB9s1HIfxOcoWUSae2jq571DMfTkDGgIdIK6r</string>
+    <string name="parse_client_key" translatable="false">4x5zWMQgvjPuoICaZlNPa285mxBm1kf1iksGdVDV</string>
+
+
+    <string name="pref_current_list_id" translatable="false">pref_current_list_id</string>
 </resources>

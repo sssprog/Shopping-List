@@ -1,12 +1,16 @@
 package com.sssprog.shoppingliststandalone.ui;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.view.View;
 
 import com.sssprog.shoppingliststandalone.mvp.Presenter;
 import com.sssprog.shoppingliststandalone.mvp.PresenterHolder;
 
+import butterknife.ButterKnife;
 
-public abstract class BaseMvpActivity<P extends Presenter> extends BaseActivity {
+public class BaseMvpFragment<P extends Presenter> extends Fragment {
 
     private PresenterHolder<P> presenterHolder;
 
@@ -15,11 +19,17 @@ public abstract class BaseMvpActivity<P extends Presenter> extends BaseActivity 
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         presenterHolder = PresenterHolder.createHolder(this);
         presenterHolder.init(savedInstanceState);
         getPresenter().attach(this);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        ButterKnife.inject(this, view);
     }
 
     @Override
@@ -38,14 +48,6 @@ public abstract class BaseMvpActivity<P extends Presenter> extends BaseActivity 
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         presenterHolder.saveState(outState);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (isFinishing()) {
-            presenterHolder.onDestroy();
-        }
     }
 
 }

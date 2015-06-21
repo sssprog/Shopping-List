@@ -12,6 +12,8 @@
         <item name="actionBarStyle">@style/AppWidget.ActionBar</item>
         <item name="actionBarTheme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
         <item name="actionBarPopupTheme">@style/ThemeOverlay.AppCompat.Light</item>
+
+        <item name="alertDialogTheme">@style/AppTheme.AlertDialog</item>
     </style>
 
     <string name="font_roboto_light" translatable="false">fonts/Roboto-Light.ttf</string>
@@ -83,6 +85,12 @@
         <item name="displayOptions">homeAsUp|showHome|showTitle</item>
         <item name="android:elevation">@dimen/actionbar_elevation</item>
         <item name="elevation">@dimen/actionbar_elevation</item>
+    </style>
+
+    <style name="AppTheme.AlertDialog" parent="@style/Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorAccent">@color/accent</item>
     </style>
 
 </resources>
