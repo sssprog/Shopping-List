@@ -3,4 +3,9 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="actionbar_elevation">4dp</dimen>
+    <dimen name="list_left_icon_margin">16dp</dimen>
+    <dimen name="list_left_content_margin">72dp</dimen>
+    <dimen name="list_left_content_margin_from_icon">32dp</dimen>
+    <dimen name="list_right_margin">16dp</dimen>
+    <dimen name="history_swipe_to_delete_show_dividers_distance">100dp</dimen>
 </resources>

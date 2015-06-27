@@ -4,6 +4,12 @@
     tools:context=".MainActivity">
 
     <item
+        android:id="@+id/action_add_items"
+        android:icon="@drawable/ic_add_white_24dp"
+        android:title="@string/add_items"
+        app:showAsAction="always" />
+
+    <item
         android:id="@+id/action_rename_list"
         android:title="@string/rename_list"
         app:showAsAction="never" />

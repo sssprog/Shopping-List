@@ -8,18 +8,20 @@ import android.view.MenuItem;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.sssprog.shoppingliststandalone.R;
-import com.sssprog.shoppingliststandalone.api.parsemodels.ListModel;
+import com.sssprog.shoppingliststandalone.api.database.ListModel;
 import com.sssprog.shoppingliststandalone.dialogs.AlertDialogFragment;
 import com.sssprog.shoppingliststandalone.dialogs.PromptDialogFragment;
+import com.sssprog.shoppingliststandalone.events.ListChangedEvent;
 import com.sssprog.shoppingliststandalone.mvp.PresenterClass;
 import com.sssprog.shoppingliststandalone.ui.BaseMvpFragment;
-import com.sssprog.shoppingliststandalone.utils.LogHelper;
 import com.sssprog.shoppingliststandalone.utils.Prefs;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import de.greenrobot.event.EventBus;
 
 @PresenterClass(ListsPresenter.class)
 public class ListsFragment extends BaseMvpFragment<ListsPresenter> implements
@@ -43,7 +45,6 @@ public class ListsFragment extends BaseMvpFragment<ListsPresenter> implements
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         getPresenter().loadLists();
-        LogHelper.i("-tag-", "onActivityCreated");
     }
 
     public void setData(Menu navigationMenu) {
@@ -67,7 +68,7 @@ public class ListsFragment extends BaseMvpFragment<ListsPresenter> implements
         }
         ListModel list = menuItems.get(item.getItemId());
         if (list != null) {
-            Prefs.putString(R.string.pref_current_list_id, list.getLocalId());
+            Prefs.putLong(R.string.pref_current_list_id, list.getId());
             updateCheckedMenuItem();
             updateActivityTitle();
             dispatchOnItemSelected();
@@ -144,11 +145,11 @@ public class ListsFragment extends BaseMvpFragment<ListsPresenter> implements
         getActivity().setTitle(currentItem != null ? currentItem.getName() : getString(R.string.app_name));
     }
 
-    private ListModel getCurrentList() {
+    public ListModel getCurrentList() {
         return Iterables.find(items, new Predicate<ListModel>() {
             @Override
             public boolean apply(ListModel item) {
-                return item.getLocalId().equals(Prefs.getString(R.string.pref_current_list_id));
+                return item.getId() == Prefs.getLong(R.string.pref_current_list_id);
             }
         }, !items.isEmpty() ? items.get(0) : null);
     }
@@ -164,9 +165,9 @@ public class ListsFragment extends BaseMvpFragment<ListsPresenter> implements
     public void onPromptDialogPositive(int requestCode, String value) {
         switch (requestCode) {
             case DIALOG_ADD_LIST:
-                ListModel list = ListModel.createObject();
+                ListModel list = new ListModel();
                 list.setName(value);
-                getPresenter().saveList(list);
+                getPresenter().addItem(list);
                 break;
             case DIALOG_RENAME_LIST:
                 list = getCurrentList();
@@ -179,7 +180,7 @@ public class ListsFragment extends BaseMvpFragment<ListsPresenter> implements
     }
 
     private void dispatchOnItemSelected() {
-
+        EventBus.getDefault().post(new ListChangedEvent());
     }
 
     @Override

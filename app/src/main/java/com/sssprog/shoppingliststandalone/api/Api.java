@@ -5,7 +5,11 @@ import com.parse.ParseACL;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.sssprog.shoppingliststandalone.App;
+import com.sssprog.shoppingliststandalone.api.parsemodels.CategoryModel;
+import com.sssprog.shoppingliststandalone.api.parsemodels.HistoryItemModel;
+import com.sssprog.shoppingliststandalone.api.parsemodels.ListItemModel;
 import com.sssprog.shoppingliststandalone.api.parsemodels.ListModel;
+import com.sssprog.shoppingliststandalone.api.parsemodels.QuantityUnitModel;
 
 import java.util.concurrent.Executors;
 
@@ -26,9 +30,13 @@ public class Api {
 
     public void init() {
         ParseObject.registerSubclass(ListModel.class);
+        ParseObject.registerSubclass(CategoryModel.class);
+        ParseObject.registerSubclass(QuantityUnitModel.class);
+        ParseObject.registerSubclass(HistoryItemModel.class);
+        ParseObject.registerSubclass(ListItemModel.class);
 
-        Parse.enableLocalDatastore(App.getAppContext());
-        Parse.initialize(App.getAppContext());
+        Parse.enableLocalDatastore(App.getInstance());
+        Parse.initialize(App.getInstance());
         ParseUser.enableAutomaticUser();
 
         ParseACL defaultAcl = new ParseACL();

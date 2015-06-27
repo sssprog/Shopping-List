@@ -9,9 +9,8 @@ import java.util.UUID;
 @ParseClassName("List")
 public class ListModel extends ParseObject {
 
-    private static final String FIELD_NAME = "name";
-    private static final String FIELD_LOCAL_ID = "local_id";
-
+    public static final String FIELD_NAME = "name";
+    public static final String FIELD_LOCAL_ID = "local_id";
 
     public String getName() {
         return getString(FIELD_NAME);

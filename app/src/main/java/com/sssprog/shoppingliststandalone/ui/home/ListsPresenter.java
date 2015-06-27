@@ -1,9 +1,11 @@
 package com.sssprog.shoppingliststandalone.ui.home;
 
+import com.sssprog.shoppingliststandalone.R;
 import com.sssprog.shoppingliststandalone.api.SimpleRxSubscriber;
-import com.sssprog.shoppingliststandalone.api.parsemodels.ListModel;
+import com.sssprog.shoppingliststandalone.api.database.ListModel;
 import com.sssprog.shoppingliststandalone.api.services.ListService;
 import com.sssprog.shoppingliststandalone.mvp.Presenter;
+import com.sssprog.shoppingliststandalone.utils.Prefs;
 
 import java.util.List;
 
@@ -25,6 +27,21 @@ public class ListsPresenter extends Presenter<ListsFragment> {
         });
     }
 
+    void addItem(ListModel item) {
+        ListService.getInstance().saveItem(item)
+                .subscribe(new SimpleRxSubscriber<ListModel>() {
+                    @Override
+                    public void onNext(ListModel list) {
+                        Prefs.putLong(R.string.pref_current_list_id, list.getId());
+                    }
+
+                    @Override
+                    public void onCompleted() {
+                        loadLists();
+                    }
+                });
+    }
+
     void saveList(ListModel item) {
         ListService.getInstance().saveItem(item)
                 .doOnCompleted(new Action0() {
@@ -33,7 +50,7 @@ public class ListsPresenter extends Presenter<ListsFragment> {
                         loadLists();
                     }
                 })
-                .subscribe(new SimpleRxSubscriber<Void>());
+                .subscribe(new SimpleRxSubscriber<ListModel>());
     }
 
     void deleteList(ListModel item) {

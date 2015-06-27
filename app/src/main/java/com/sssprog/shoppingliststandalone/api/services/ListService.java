@@ -1,8 +1,9 @@
 package com.sssprog.shoppingliststandalone.api.services;
 
-import com.parse.ParseException;
 import com.sssprog.shoppingliststandalone.api.Api;
-import com.sssprog.shoppingliststandalone.api.parsemodels.ListModel;
+import com.sssprog.shoppingliststandalone.api.database.DatabaseHelper;
+import com.sssprog.shoppingliststandalone.api.database.ListModel;
+import com.sssprog.shoppingliststandalone.utils.DatabaseUtils;
 
 import java.util.List;
 
@@ -24,29 +25,31 @@ public class ListService {
     public Observable<List<ListModel>> getAll() {
         return Observable.create(new Observable.OnSubscribe<List<ListModel>>() {
             @Override
-            public void call(Subscriber<? super List<ListModel>> subscriber) {
-                try {
-                    List<ListModel> result = ListModel.query().fromLocalDatastore().find();
-                    subscriber.onNext(result);
-                    subscriber.onCompleted();
-                } catch (ParseException e) {
-                    subscriber.onError(e);
-                }
+            public void call(final Subscriber<? super List<ListModel>> subscriber) {
+                DatabaseUtils.executeWithRuntimeException(new DatabaseUtils.DatabaseTask() {
+                    @Override
+                    public void execute() throws Exception {
+                        subscriber.onNext(DatabaseHelper.getInstance().getListDao().queryForAll());
+                        subscriber.onCompleted();
+                    }
+                });
             }
         }).subscribeOn(Api.scheduler())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<Void> saveItem(final ListModel item) {
-        return Observable.create(new Observable.OnSubscribe<Void>() {
+    public Observable<ListModel> saveItem(final ListModel item) {
+        return Observable.create(new Observable.OnSubscribe<ListModel>() {
             @Override
-            public void call(Subscriber<? super Void> subscriber) {
-                try {
-                    item.pin();
-                    subscriber.onCompleted();
-                } catch (ParseException e) {
-                    subscriber.onError(e);
-                }
+            public void call(final Subscriber<? super ListModel> subscriber) {
+                DatabaseUtils.executeWithRuntimeException(new DatabaseUtils.DatabaseTask() {
+                    @Override
+                    public void execute() throws Exception {
+                        DatabaseHelper.getInstance().getListDao().createOrUpdate(item);
+                        subscriber.onNext(item);
+                        subscriber.onCompleted();
+                    }
+                });
             }
         }).subscribeOn(Api.scheduler())
                 .observeOn(AndroidSchedulers.mainThread());
@@ -55,13 +58,14 @@ public class ListService {
     public Observable<Void> deleteItem(final ListModel item) {
         return Observable.create(new Observable.OnSubscribe<Void>() {
             @Override
-            public void call(Subscriber<? super Void> subscriber) {
-                try {
-                    item.unpin();
-                    subscriber.onCompleted();
-                } catch (ParseException e) {
-                    subscriber.onError(e);
-                }
+            public void call(final Subscriber<? super Void> subscriber) {
+                DatabaseUtils.executeWithRuntimeException(new DatabaseUtils.DatabaseTask() {
+                    @Override
+                    public void execute() throws Exception {
+                        DatabaseHelper.getInstance().getListDao().delete(item);
+                        subscriber.onCompleted();
+                    }
+                });
             }
         }).subscribeOn(Api.scheduler())
                 .observeOn(AndroidSchedulers.mainThread());
