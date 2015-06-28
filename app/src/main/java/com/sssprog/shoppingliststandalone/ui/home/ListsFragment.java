@@ -162,7 +162,7 @@ public class ListsFragment extends BaseMvpFragment<ListsPresenter> implements
     }
 
     @Override
-    public void onPromptDialogPositive(int requestCode, String value) {
+    public void onPromptDialogPositive(int requestCode, String value, Bundle params) {
         switch (requestCode) {
             case DIALOG_ADD_LIST:
                 ListModel list = new ListModel();

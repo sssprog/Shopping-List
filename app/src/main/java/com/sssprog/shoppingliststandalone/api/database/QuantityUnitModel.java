@@ -4,7 +4,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 @DatabaseTable(tableName = QuantityUnitModel.TABLE_NAME)
-public class QuantityUnitModel {
+public class QuantityUnitModel implements ModelWithName, ModelWithId {
 
     public static final String TABLE_NAME = "quantity_unit";
     public static final String FIELD_ID = "_id";
@@ -36,4 +36,8 @@ public class QuantityUnitModel {
         return id == ((QuantityUnitModel) o).id;
     }
 
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

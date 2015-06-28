@@ -1,4 +1,4 @@
-package com.sssprog.shoppingliststandalone.ui.home;
+package com.sssprog.shoppingliststandalone.ui.dictionary;
 
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
@@ -11,47 +11,47 @@ import com.sssprog.shoppingliststandalone.utils.ViewUtils;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-public class ListViewHolder extends RecyclerView.ViewHolder {
+public class DictionaryViewHolder extends RecyclerView.ViewHolder {
 
     @InjectView(R.id.container)
     View container;
     @InjectView(R.id.title)
     TextView title;
-    @InjectView(R.id.info)
-    TextView info;
+    @InjectView(R.id.dividerTop)
+    View dividerTop;
+    @InjectView(R.id.dividerBottom)
+    View dividerBottom;
 
-    private ListItemListener listener;
+    private final float dividersMaxDistance;
+    private ItemListener listener;
 
-    public ListViewHolder(View view, ListItemListener itemListener) {
+    public DictionaryViewHolder(View view, ItemListener itemListener) {
         super(view);
         ButterKnife.inject(this, view);
+        dividersMaxDistance = view.getResources().getDimension(R.dimen.history_swipe_to_delete_show_dividers_distance);
         ViewUtils.setBackground(container, ViewUtils.makeTouchFeedbackDrawable(view.getContext(), Color.WHITE));
         this.listener = itemListener;
-        container.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.onClick(getAdapterPosition());
-            }
-        });
         container.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                return listener.onLongClick(getAdapterPosition());
+                return listener.onItemLongClick(getAdapterPosition());
             }
         });
     }
 
     public void move(float dx) {
         container.setTranslationX(dx);
+        float alpha = Math.abs(dx) / dividersMaxDistance;
+        alpha = Math.min(1, alpha);
+        dividerBottom.setAlpha(alpha);
+        dividerTop.setAlpha(alpha);
     }
 
     public void resetTranslation() {
         move(0);
     }
 
-    public interface ListItemListener {
-        void onClick(int position);
-
-        boolean onLongClick(int position);
+    public interface ItemListener {
+        boolean onItemLongClick(int position);
     }
 }

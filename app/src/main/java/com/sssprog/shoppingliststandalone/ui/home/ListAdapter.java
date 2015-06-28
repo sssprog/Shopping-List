@@ -8,21 +8,35 @@ import android.view.ViewGroup;
 
 import com.sssprog.shoppingliststandalone.R;
 import com.sssprog.shoppingliststandalone.api.database.ItemModel;
+import com.sssprog.shoppingliststandalone.utils.LogHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListAdapter extends RecyclerView.Adapter<ListViewHolder> implements ListViewHolder.OnListItemClicked {
+public class ListAdapter extends RecyclerView.Adapter<ListViewHolder> implements ListViewHolder.ListItemListener {
 
     private final Context context;
     private List<ItemModel> items = new ArrayList<>();
+    private final ListAdapterListener listener;
 
-    public ListAdapter(Context context) {
+    public ListAdapter(Context context, ListAdapterListener listener) {
         this.context = context;
+        this.listener = listener;
     }
 
     public void setItems(List<ItemModel> items) {
         this.items = items;
+        notifyDataSetChanged();
+    }
+
+    public ItemModel removeItem(int position) {
+        ItemModel item = items.remove(position);
+        notifyDataSetChanged();
+        return item;
+    }
+
+    public void addItem(ItemModel item) {
+        items.add(item);
         notifyDataSetChanged();
     }
 
@@ -45,14 +59,24 @@ public class ListAdapter extends RecyclerView.Adapter<ListViewHolder> implements
     public void onBindViewHolder(ListViewHolder holder, int position) {
         ItemModel item = items.get(position);
         holder.resetTranslation();
-        holder.name.setText(item.getName());
+        LogHelper.i("-tag-", "reset translation");
+        holder.title.setText(item.getName());
         holder.info.setText("1 kl = 3$, Buy ripe ones");
 //        holder.info.setVisibility(View.GONE);
     }
 
     @Override
-    public void onItemClicked(int position) {
+    public void onClick(int position) {
 
+    }
+
+    @Override
+    public boolean onLongClick(int position) {
+        return listener.onItemLongClick(items.get(position));
+    }
+
+    public interface ListAdapterListener {
+        boolean onItemLongClick(ItemModel item);
     }
 
 }

@@ -7,6 +7,7 @@ import android.content.DialogInterface.OnShowListener;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -24,6 +25,7 @@ public class PromptDialogFragment extends BaseDialogFragment<PromptDialogFragmen
 
     private static final String PARAM_HINT = "PARAM_HINT";
     private static final String PARAM_INITIAL_VALUE = "PARAM_INITIAL_VALUE";
+    private static final String PARAM_CAP_SENTENCES = "PARAM_CAP_SENTENCES";
 
     private String initialValue;
     private EditText editText;
@@ -36,6 +38,9 @@ public class PromptDialogFragment extends BaseDialogFragment<PromptDialogFragmen
         initialValue = getArguments().getString(PARAM_INITIAL_VALUE);
         editText.setText(initialValue);
         editText.setHint(getArguments().getString(PARAM_HINT));
+        if (!getArguments().getBoolean(PARAM_CAP_SENTENCES)) {
+            editText.setInputType(InputType.TYPE_CLASS_TEXT);
+        }
         editText.setImeActionLabel(null, EditorInfo.IME_ACTION_DONE);
         editText.setOnEditorActionListener(new OnEditorActionListener() {
             @Override
@@ -80,7 +85,7 @@ public class PromptDialogFragment extends BaseDialogFragment<PromptDialogFragmen
     protected void onPositiveButtonClicked() {
         String value = editText.getText().toString().trim();
         if (!TextUtils.equals(initialValue, value)) {
-            getListener().onPromptDialogPositive(getRequestCode(), value);
+            getListener().onPromptDialogPositive(getRequestCode(), value, getParams());
         }
         dismiss();
     }
@@ -89,6 +94,7 @@ public class PromptDialogFragment extends BaseDialogFragment<PromptDialogFragmen
 
         public PromptDialogBuilder(Context context) {
             super(context);
+            setCapSentences(true);
         }
 
         public PromptDialogBuilder setInitialValue(String value) {
@@ -105,17 +111,19 @@ public class PromptDialogFragment extends BaseDialogFragment<PromptDialogFragmen
             return setHint(context.getString(hint));
         }
 
+        public PromptDialogBuilder setCapSentences(boolean value) {
+            args.putBoolean(PARAM_CAP_SENTENCES, value);
+            return self();
+        }
+
         public PromptDialogFragment build() {
-//            PromptDialogFragment result = new PromptDialogFragment();
-//            result.setArguments(args);
-//            return result;
             return build(PromptDialogFragment.class);
         }
 
     }
 
     public interface PromptDialogListener {
-        void onPromptDialogPositive(int requestCode, String value);
+        void onPromptDialogPositive(int requestCode, String value, Bundle params);
     }
 
 }

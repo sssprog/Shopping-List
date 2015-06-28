@@ -27,4 +27,17 @@
     <string name="item_was_deleted">Item was deleted</string>
     <string name="undo">Undo</string>
     <string name="list_is_empty">List is empty</string>
+    <string name="quantity_units">Quantity units</string>
+    <string name="categories">Categories</string>
+    <string name="dictionary_create_dialog_title">Create</string>
+    <string name="dictionary_rename_dialog_title">Rename</string>
+    <string name="item_name">Item name</string>
+    <string name="quantity">Quantity</string>
+    <string name="edit_item">Edit item</string>
+    <string name="price">Price</string>
+    <string name="total_cost">Total: %s</string>
+    <string name="category">Category</string>
+    <string name="default_category">Uncategorized</string>
+    <string name="default_quantity_unit">Units</string>
+    <string name="note">Note</string>
 </resources>

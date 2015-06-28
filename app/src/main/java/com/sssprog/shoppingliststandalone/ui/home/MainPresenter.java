@@ -28,4 +28,16 @@ public class MainPresenter extends Presenter<MainActivity> {
         });
     }
 
+    public void deleteItem(ItemModel item) {
+        ItemService.getInstance().deleteWithDelay(item);
+    }
+
+    public boolean cancelDeletion(ItemModel item) {
+        return ItemService.getInstance().cancelDeletion(item);
+    }
+
+    public void finishDeletion() {
+        ItemService.getInstance().finishDeletion();
+    }
+
 }

@@ -17,6 +17,7 @@ public class BaseDialogFragment<T> extends DialogFragment {
     static final String PARAM_NEGATIVE_BUTTON_TEXT = "PARAM_NEGATIVE_BUTTON_TEXT";
     static final String PARAM_TITLE = "PARAM_TITLE";
     static final String PARAM_MESSAGE = "PARAM_MESSAGE";
+    static final String PARAM_PARAMS = "PARAM_PARAMS";
 
     @NonNull
     @Override
@@ -65,6 +66,10 @@ public class BaseDialogFragment<T> extends DialogFragment {
 
     protected void onPositiveButtonClicked() {
         dismiss();
+    }
+
+    protected Bundle getParams() {
+        return getArguments().getBundle(PARAM_PARAMS);
     }
 
     public static class BaseDialogBuilder<T extends BaseDialogBuilder> {
@@ -126,6 +131,11 @@ public class BaseDialogFragment<T> extends DialogFragment {
 
         public T setNegativeButtonText(int text) {
             return setNegativeButtonText(context.getString(text));
+        }
+
+        public T setParams(Bundle params) {
+            args.putBundle(PARAM_PARAMS, params);
+            return self();
         }
 
         public <D extends Fragment> D build(Class<D> dialogClass) {

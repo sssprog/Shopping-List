@@ -69,8 +69,24 @@ public class ViewUtils {
         return new LayerDrawable(new Drawable[] { new ColorDrawable(color), getSelectableItemBackground(context) });
     }
 
-//    public static void tintButton(View button, int color) {
-//        ColorStateList list = new ColorStateList()
-////        ViewCompat.setBackgroundTintList(button, getResources().getColorStateList(R.color.accent_button));
-//    }
+    public static Drawable getSpinnerBackgroundNormal(Context context) {
+        Drawable lineNormal = DrawableCompat.wrap(
+                ViewUtils.getDrawable(context, R.drawable.abc_textfield_default_mtrl_alpha).mutate());
+        DrawableCompat.setTint(lineNormal, context.getResources().getColor(R.color.light_10p));
+        Drawable indicatorNormal = DrawableCompat.wrap(
+                ViewUtils.getDrawable(context, R.drawable.abc_spinner_mtrl_am_alpha).mutate());
+        DrawableCompat.setTint(indicatorNormal, context.getResources().getColor(R.color.light_26p));
+        return new LayerDrawable(new Drawable[] { lineNormal, indicatorNormal });
+    }
+
+    public static Drawable getSpinnerBackgroundPressed(Context context) {
+        Drawable linePressed = DrawableCompat.wrap(
+                ViewUtils.getDrawable(context, R.drawable.abc_textfield_activated_mtrl_alpha).mutate());
+        DrawableCompat.setTint(linePressed, context.getResources().getColor(R.color.accent));
+        Drawable indicatorPressed = DrawableCompat.wrap(
+                ViewUtils.getDrawable(context, R.drawable.abc_spinner_mtrl_am_alpha).mutate());
+        DrawableCompat.setTint(indicatorPressed, context.getResources().getColor(R.color.accent));
+        return new LayerDrawable(new Drawable[] { linePressed, indicatorPressed });
+    }
+
 }

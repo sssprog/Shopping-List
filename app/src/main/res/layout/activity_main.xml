@@ -28,7 +28,6 @@
         </FrameLayout>
 
         <include layout="@layout/toolbar" />
-
     </FrameLayout>
 
     <android.support.design.widget.NavigationView

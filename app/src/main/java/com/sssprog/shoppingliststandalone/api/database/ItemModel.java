@@ -11,7 +11,7 @@ import junit.framework.Assert;
 import java.math.BigDecimal;
 
 @DatabaseTable(tableName = ItemModel.TABLE_NAME)
-public class ItemModel {
+public class ItemModel implements ModelWithName {
 
     public static final String TABLE_NAME = "item";
     public static final String FIELD_ID = "_id";
@@ -138,14 +138,6 @@ public class ItemModel {
             return false;
         }
         return id == ((ItemModel) o).id;
-    }
-
-    public static void copyFields(ItemModel source, ItemModel destination) {
-        destination.name = source.name;
-        destination.category = source.category;
-        destination.price = source.price;
-        destination.quantity = source.quantity;
-        destination.quantityUnit = source.quantityUnit;
     }
 
 }

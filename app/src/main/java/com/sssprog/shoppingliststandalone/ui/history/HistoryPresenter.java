@@ -44,7 +44,7 @@ public class HistoryPresenter extends Presenter<HistoryActivity> {
     }
 
     public void addItem(ItemModel item) {
-        ItemService.getInstance().saveItem(item).subscribe(new SimpleRxSubscriber<ItemModel>() {
+        ItemService.getInstance().save(item).subscribe(new SimpleRxSubscriber<ItemModel>() {
             @Override
             public void onNext(final ItemModel result) {
                 runViewAction(new Runnable() {
@@ -58,15 +58,15 @@ public class HistoryPresenter extends Presenter<HistoryActivity> {
     }
 
     public void deleteItem(ItemModel item) {
-        ItemService.getInstance().deleteItemWithDelay(item);
+        ItemService.getInstance().deleteWithDelay(item);
     }
 
     public boolean cancelDeletion(ItemModel item) {
         return ItemService.getInstance().cancelDeletion(item);
     }
 
-    public void finalizeDeletion() {
-        ItemService.getInstance().finalizeDeletion();
+    public void finishDeletion() {
+        ItemService.getInstance().finishDeletion();
     }
 
     public void addItemsToList(Collection<ItemModel> items) {

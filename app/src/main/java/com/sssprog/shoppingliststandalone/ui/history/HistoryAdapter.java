@@ -17,16 +17,18 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-public class HistoryAdapter extends RecyclerView.Adapter<HistoryViewHolder> implements HistoryViewHolder.OnListItemClicked {
+public class HistoryAdapter extends RecyclerView.Adapter<HistoryViewHolder> implements HistoryViewHolder.HistoryItemListener {
 
     private final Context context;
     private List<ItemModel> items = new ArrayList<>();
     private final HashSet<Long> selectedItems;
     private String query = "";
+    private final HistoryAdapterListener listener;
 
-    public HistoryAdapter(Context context, HashSet<Long> selectedItems) {
+    public HistoryAdapter(Context context, HashSet<Long> selectedItems, HistoryAdapterListener listener) {
         this.context = context;
         this.selectedItems = selectedItems;
+        this.listener = listener;
     }
 
     public void setItems(List<ItemModel> items, String query) {
@@ -66,23 +68,32 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryViewHolder> impl
         holder.resetTranslation();
         holder.checkbox.setChecked(selectedItems.contains(item.getId()));
         if (query.isEmpty()) {
-            holder.name.setText(item.getName());
+            holder.title.setText(item.getName());
         } else {
             SpannableStringBuilder nameSpannable = new SpannableStringBuilder(item.getName());
             int start = item.getName().toLowerCase().indexOf(query);
             nameSpannable.setSpan(new StyleSpan(Typeface.BOLD), start, start + query.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-            holder.name.setText(nameSpannable);
+            holder.title.setText(nameSpannable);
         }
     }
 
     @Override
-    public void onItemClicked(int position) {
+    public void onClick(int position) {
         ItemModel item = items.get(position);
         if (selectedItems.contains(item.getId())) {
             selectedItems.remove(item.getId());
         } else {
             selectedItems.add(item.getId());
         }
+    }
+
+    @Override
+    public boolean onLongClick(int position) {
+        return listener.onItemLongClick(items.get(position));
+    }
+
+    public interface HistoryAdapterListener {
+        boolean onItemLongClick(ItemModel item);
     }
 
 }

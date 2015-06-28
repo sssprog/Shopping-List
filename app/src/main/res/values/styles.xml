@@ -95,4 +95,18 @@
         <item name="colorAccent">@color/accent</item>
     </style>
 
+    <style name="AppWidget.MaterialEditText">
+        <item name="met_primaryColor">?colorAccent</item>
+        <item name="met_floatingLabel">highlight</item>
+        <item name="met_baseColor">?android:textColorPrimary</item>
+        <item name="android:textSize">18sp</item>
+        <item name="fontPath">@string/font_roboto_regular</item>
+        <item name="met_underlineColor">@color/light_10p</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="AppWidget.MaterialEditText.NoFloatingLabel">
+        <item name="met_floatingLabel">none</item>
+    </style>
+
 </resources>

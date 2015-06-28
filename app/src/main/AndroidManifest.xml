@@ -28,6 +28,13 @@
             android:label="@string/history_activity_title"
             android:theme="@style/AppTheme.WhiteBackground"
             android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name=".ui.dictionary.DictionaryActivity"
+            android:theme="@style/AppTheme.WhiteBackground" />
+        <activity
+            android:name=".ui.itemeditor.ItemEditorActivity"
+            android:label="@string/edit_item"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
 
         <meta-data
             android:name="com.parse.APPLICATION_ID"

@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?actionBarSize">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="16dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/item_name"
+                android:textAppearance="@style/TextAppearance.AppTheme.Caption"
+                android:textColor="@color/text_secondary" />
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/itemName"
+                style="@style/AppWidget.MaterialEditText.NoFloatingLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/item_name"
+                android:inputType="textCapSentences" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/item_editor_group_margin"
+                android:text="@string/quantity"
+                android:textAppearance="@style/TextAppearance.AppTheme.Caption"
+                android:textColor="@color/text_secondary" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:id="@+id/quantityContainer"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="8dp"
+                    android:layout_weight="1">
+
+                    <ImageButton
+                        android:id="@+id/quantityMinusButton"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="?selectableItemBackgroundBorderless"
+                        android:src="@drawable/ic_minus_grey600_24dp" />
+
+                    <com.rengwuxian.materialedittext.MaterialEditText
+                        android:id="@+id/quantity"
+                        style="@style/AppWidget.MaterialEditText.NoFloatingLabel"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:layout_weight="1"
+                        android:inputType="numberDecimal"
+                        android:selectAllOnFocus="true" />
+
+                    <ImageButton
+                        android:id="@+id/quantityPlusButton"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="?selectableItemBackgroundBorderless"
+                        android:src="@drawable/ic_add_white_24dp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <com.sssprog.shoppingliststandalone.views.AppSpinner
+                        android:id="@+id/quantitySpinner"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+
+                    <ImageButton
+                        android:id="@+id/editQuantityUnitsButton"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="?selectableItemBackgroundBorderless"
+                        android:src="@drawable/ic_pencil_grey600_24dp" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/item_editor_group_margin"
+                android:text="@string/price"
+                android:textAppearance="@style/TextAppearance.AppTheme.Caption"
+                android:textColor="@color/text_secondary" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.rengwuxian.materialedittext.MaterialEditText
+                    android:id="@+id/price"
+                    style="@style/AppWidget.MaterialEditText.NoFloatingLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="numberDecimal"
+                    android:selectAllOnFocus="true" />
+
+                <TextView
+                    android:id="@+id/totalCost"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_weight="1"
+                    android:textAppearance="@style/TextAppearance.AppTheme.Subhead"
+                    tools:text="Total: 9$" />
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/item_editor_group_margin"
+                android:text="@string/category"
+                android:textAppearance="@style/TextAppearance.AppTheme.Caption"
+                android:textColor="@color/text_secondary" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.sssprog.shoppingliststandalone.views.AppSpinner
+                    android:id="@+id/categorySpinner"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <ImageButton
+                    android:id="@+id/editCategoriesButton"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_pencil_grey600_24dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/noteContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/item_editor_group_margin"
+                    android:text="@string/note"
+                    android:textAppearance="@style/TextAppearance.AppTheme.Caption"
+                    android:textColor="@color/text_secondary" />
+
+                <com.rengwuxian.materialedittext.MaterialEditText
+                    android:id="@+id/note"
+                    style="@style/AppWidget.MaterialEditText.NoFloatingLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/note"
+                    android:inputType="textCapSentences" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <include layout="@layout/toolbar" />
+
+</FrameLayout>

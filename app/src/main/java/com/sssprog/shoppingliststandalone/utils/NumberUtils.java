@@ -3,6 +3,8 @@ package com.sssprog.shoppingliststandalone.utils;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.util.Locale;
 
 public class NumberUtils {
 
@@ -37,6 +39,38 @@ public class NumberUtils {
         } catch (NumberFormatException e) {
             return BigDecimal.ZERO;
         }
+    }
+
+    public static String priceToString(BigDecimal price) {
+        return String.format(Locale.getDefault(), "%.2f", price);
+    }
+
+    public static String quantityToString(BigDecimal quantity) {
+        return new DecimalFormat("#.###").format(quantity);
+    }
+
+    public static String priceWithCurrency(BigDecimal price) {
+        return priceToString(price);
+    }
+
+    public static boolean numberGreater(BigDecimal number, int value) {
+        return number.compareTo(new BigDecimal(value)) > 0;
+    }
+
+    public static boolean numberGreaterOrEquals(BigDecimal number, int value) {
+        return number.compareTo(new BigDecimal(value)) >= 0;
+    }
+
+    public static boolean numberLess(BigDecimal number, int value) {
+        return number.compareTo(new BigDecimal(value)) < 0;
+    }
+
+    public static boolean numberLessOrEquals(BigDecimal number, int value) {
+        return number.compareTo(new BigDecimal(value)) <= 0;
+    }
+
+    public static boolean numberEquals(BigDecimal number, int value) {
+        return number.compareTo(new BigDecimal(value)) == 0;
     }
 
 }

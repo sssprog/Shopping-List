@@ -4,7 +4,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 @DatabaseTable(tableName = CategoryModel.TABLE_NAME)
-public class CategoryModel {
+public class CategoryModel implements ModelWithName, ModelWithId {
 
     public static final String TABLE_NAME = "category";
     public static final String FIELD_ID = "_id";
@@ -36,4 +36,8 @@ public class CategoryModel {
         return id == ((CategoryModel) o).id;
     }
 
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

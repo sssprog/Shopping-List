@@ -18,17 +18,17 @@ public class HistoryViewHolder extends RecyclerView.ViewHolder {
     View container;
     @InjectView(R.id.checkbox)
     CheckBox checkbox;
-    @InjectView(R.id.name)
-    TextView name;
+    @InjectView(R.id.title)
+    TextView title;
     @InjectView(R.id.dividerTop)
     View dividerTop;
     @InjectView(R.id.dividerBottom)
     View dividerBottom;
 
     private final float dividersMaxDistance;
-    private OnListItemClicked listener;
+    private HistoryItemListener listener;
 
-    public HistoryViewHolder(View view, OnListItemClicked itemListener) {
+    public HistoryViewHolder(View view, HistoryItemListener itemListener) {
         super(view);
         ButterKnife.inject(this, view);
         dividersMaxDistance = view.getResources().getDimension(R.dimen.history_swipe_to_delete_show_dividers_distance);
@@ -38,7 +38,13 @@ public class HistoryViewHolder extends RecyclerView.ViewHolder {
             @Override
             public void onClick(View v) {
                 checkbox.toggle();
-                listener.onItemClicked(getAdapterPosition());
+                listener.onClick(getAdapterPosition());
+            }
+        });
+        container.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                return listener.onLongClick(getAdapterPosition());
             }
         });
     }
@@ -55,7 +61,9 @@ public class HistoryViewHolder extends RecyclerView.ViewHolder {
         move(0);
     }
 
-    public interface OnListItemClicked {
-        void onItemClicked(int position);
+    public interface HistoryItemListener {
+        void onClick(int position);
+
+        boolean onLongClick(int position);
     }
 }

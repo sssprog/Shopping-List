@@ -8,4 +8,6 @@
     <dimen name="list_left_content_margin_from_icon">32dp</dimen>
     <dimen name="list_right_margin">16dp</dimen>
     <dimen name="history_swipe_to_delete_show_dividers_distance">100dp</dimen>
+    <dimen name="fab_margin">0dp</dimen>
+    <dimen name="item_editor_group_margin">24dp</dimen>
 </resources>

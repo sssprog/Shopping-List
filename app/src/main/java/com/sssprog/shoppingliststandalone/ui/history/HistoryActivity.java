@@ -32,13 +32,13 @@ import com.sssprog.shoppingliststandalone.R;
 import com.sssprog.shoppingliststandalone.api.database.ItemModel;
 import com.sssprog.shoppingliststandalone.mvp.PresenterClass;
 import com.sssprog.shoppingliststandalone.ui.BaseMvpActivity;
+import com.sssprog.shoppingliststandalone.ui.itemeditor.ItemEditorActivity;
+import com.sssprog.shoppingliststandalone.utils.Utils;
 import com.sssprog.shoppingliststandalone.utils.ViewStateSwitcher;
 import com.sssprog.shoppingliststandalone.utils.ViewUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -53,6 +53,8 @@ public class HistoryActivity extends BaseMvpActivity<HistoryPresenter> {
 
     private static final String STATE_ITEM_IS_IN_LIST = "item_is_in_list";
     private static final String STATE_ADD_ITEM = "add_item";
+
+    private static final int REQUEST_EDIT_ITEM = 0;
 
     @InjectView(R.id.recyclerView)
     RecyclerView recyclerView;
@@ -87,7 +89,14 @@ public class HistoryActivity extends BaseMvpActivity<HistoryPresenter> {
         HashSet<Long> selectedItems = savedInstanceState != null ?
                 (HashSet<Long>) savedInstanceState.getSerializable(PARAM_SELECTED_ITEMS) :
                 new HashSet<Long>();
-        adapter = new HistoryAdapter(this, selectedItems);
+        adapter = new HistoryAdapter(this, selectedItems, new HistoryAdapter.HistoryAdapterListener() {
+            @Override
+            public boolean onItemLongClick(ItemModel item) {
+                startActivityForResult(ItemEditorActivity.createIntent(HistoryActivity.this, item.getId(), true),
+                        REQUEST_EDIT_ITEM);
+                return true;
+            }
+        });
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
@@ -168,7 +177,7 @@ public class HistoryActivity extends BaseMvpActivity<HistoryPresenter> {
     @Override
     public void onPause() {
         super.onPause();
-        getPresenter().finalizeDeletion();
+        getPresenter().finishDeletion();
     }
 
     private void initNewItemView() {
@@ -266,16 +275,22 @@ public class HistoryActivity extends BaseMvpActivity<HistoryPresenter> {
         getPresenter().addItemsToList(items);
     }
 
-    void onItemsLoaded(List<ItemModel> history, List<ItemModel> listItems) {
-        this.history = history;
-        sortHistory();
+    void onItemsLoaded(List<ItemModel> history, List<ItemModel> itemsInList) {
         this.listItems.clear();
-        this.listItems.addAll(Collections2.transform(listItems, new Function<ItemModel, String>() {
+        this.listItems.addAll(Collections2.transform(itemsInList, new Function<ItemModel, String>() {
             @Override
             public String apply(ItemModel input) {
                 return input.getName().toLowerCase();
             }
         }));
+        this.history.clear();
+        this.history.addAll(Collections2.filter(history, new Predicate<ItemModel>() {
+            @Override
+            public boolean apply(ItemModel input) {
+                return !listItems.contains(input.getName().toLowerCase());
+            }
+        }));
+        sortHistory();
         updateListAndState();
     }
 
@@ -287,12 +302,7 @@ public class HistoryActivity extends BaseMvpActivity<HistoryPresenter> {
     }
 
     private void sortHistory() {
-        Collections.sort(history, new Comparator<ItemModel>() {
-            @Override
-            public int compare(ItemModel lhs, ItemModel rhs) {
-                return lhs.getName().compareToIgnoreCase(rhs.getName());
-            }
-        });
+        Utils.sortByName(history);
     }
 
     private void updateListAndState() {
@@ -331,6 +341,19 @@ public class HistoryActivity extends BaseMvpActivity<HistoryPresenter> {
             }
         });
         adapter.setItems(Lists.newArrayList(items), query);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode != RESULT_OK) {
+            return;
+        }
+        switch (requestCode) {
+            case REQUEST_EDIT_ITEM:
+                getPresenter().loadItems();
+                break;
+        }
     }
 
 }

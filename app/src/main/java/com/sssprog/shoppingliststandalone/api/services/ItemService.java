@@ -1,20 +1,15 @@
 package com.sssprog.shoppingliststandalone.api.services;
 
-import android.os.Handler;
-import android.os.Looper;
-
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 import com.j256.ormlite.dao.Dao;
 import com.sssprog.shoppingliststandalone.api.Api;
-import com.sssprog.shoppingliststandalone.api.SimpleRxSubscriber;
 import com.sssprog.shoppingliststandalone.api.database.DatabaseHelper;
 import com.sssprog.shoppingliststandalone.api.database.ItemModel;
 import com.sssprog.shoppingliststandalone.api.database.ListModel;
 import com.sssprog.shoppingliststandalone.utils.DatabaseUtils;
 
+import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -22,17 +17,13 @@ import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 
-public class ItemService {
-
-    private static final long DELETION_DELAY = 3500;
+public class ItemService extends BaseModelService<ItemModel> {
 
     private static ItemService instance;
 
-    private final Handler handler;
-    private final LinkedList<DeletedItem> deletedItems = new LinkedList<>();
-
-    public ItemService() {
-        handler = new Handler(Looper.getMainLooper());
+    @Override
+    protected Dao<ItemModel, Long> getDao() throws SQLException{
+        return DatabaseHelper.getInstance().getItemDao();
     }
 
     public static synchronized ItemService getInstance() {
@@ -54,77 +45,6 @@ public class ItemService {
                                 .where().isNull(ItemModel.FIELD_LIST)
                                 .query();
                         subscriber.onNext(result);
-                        subscriber.onCompleted();
-                    }
-                });
-            }
-        }).subscribeOn(Api.scheduler())
-                .observeOn(AndroidSchedulers.mainThread());
-    }
-
-    public Observable<ItemModel> saveItem(final ItemModel item) {
-        return Observable.create(new Observable.OnSubscribe<ItemModel>() {
-            @Override
-            public void call(final Subscriber<? super ItemModel> subscriber) {
-                DatabaseUtils.executeWithRuntimeException(new DatabaseUtils.DatabaseTask() {
-                    @Override
-                    public void execute() throws Exception {
-                        DatabaseHelper.getInstance().getItemDao().createOrUpdate(item);
-                        subscriber.onNext(item);
-                        subscriber.onCompleted();
-                    }
-                });
-            }
-        }).subscribeOn(Api.scheduler())
-                .observeOn(AndroidSchedulers.mainThread());
-    }
-
-    public void deleteItemWithDelay(ItemModel item) {
-        deletedItems.add(new DeletedItem(item, System.currentTimeMillis() + DELETION_DELAY));
-        scheduleDeletion();
-    }
-
-    public boolean cancelDeletion(final ItemModel item) {
-        return Iterables.removeIf(deletedItems, new Predicate<DeletedItem>() {
-            @Override
-            public boolean apply(DeletedItem input) {
-                return input.item.getId() == item.getId();
-            }
-        });
-    }
-
-    public void finalizeDeletion() {
-        for (DeletedItem item : deletedItems) {
-            deleteItem(item.item).subscribe(new SimpleRxSubscriber<Void>());;
-        }
-        deletedItems.clear();
-    }
-
-    private Runnable deletionTask = new Runnable() {
-        @Override
-        public void run() {
-            while (!deletedItems.isEmpty() && System.currentTimeMillis() > deletedItems.getFirst().time) {
-                deleteItem(deletedItems.getFirst().item).subscribe(new SimpleRxSubscriber<Void>());
-                deletedItems.removeFirst();
-            }
-            if (!deletedItems.isEmpty()) {
-                scheduleDeletion();
-            }
-        }
-    };
-
-    private void scheduleDeletion() {
-        handler.postDelayed(deletionTask, DELETION_DELAY);
-    }
-
-    public Observable<Void> deleteItem(final ItemModel item) {
-        return Observable.create(new Observable.OnSubscribe<Void>() {
-            @Override
-            public void call(final Subscriber<? super Void> subscriber) {
-                DatabaseUtils.executeWithRuntimeException(new DatabaseUtils.DatabaseTask() {
-                    @Override
-                    public void execute() throws Exception {
-                        DatabaseHelper.getInstance().getItemDao().delete(item);
                         subscriber.onCompleted();
                     }
                 });
@@ -164,7 +84,8 @@ public class ItemService {
                         Dao<ItemModel, Long> dao = DatabaseHelper.getInstance().getItemDao();
                         for (ItemModel history : items) {
                             ItemModel item = new ItemModel();
-                            ItemModel.copyFields(history, item);
+                            copyHistoryRelatedFields(history, item);
+                            item.setQuantity(BigDecimal.ONE);
                             item.setList(list);
                             dao.create(item);
                         }
@@ -177,14 +98,57 @@ public class ItemService {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    private static class DeletedItem {
-        ItemModel item;
-        long time;
-
-        public DeletedItem(ItemModel item, long time) {
-            this.item = item;
-            this.time = time;
-        }
+    public Observable<ItemModel> get(final long id) {
+        return Observable.create(new Observable.OnSubscribe<ItemModel>() {
+            @Override
+            public void call(final Subscriber<? super ItemModel> subscriber) {
+                DatabaseUtils.executeWithRuntimeException(new DatabaseUtils.DatabaseTask() {
+                    @Override
+                    public void execute() throws Exception {
+                        ItemModel item = getDao().queryForId(id);
+                        if (item == null) {
+                            subscriber.onError(new Exception("Item is not in DB"));
+                        } else {
+                            subscriber.onNext(item);
+                            subscriber.onCompleted();
+                        }
+                    }
+                });
+            }
+        }).subscribeOn(Api.scheduler())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
+    public Observable<ItemModel> saveAndUpdateHistory(final ItemModel item) {
+        return Observable.create(new Observable.OnSubscribe<ItemModel>() {
+            @Override
+            public void call(final Subscriber<? super ItemModel> subscriber) {
+                DatabaseUtils.callInTransaction(new Callable<ItemModel>() {
+                    @Override
+                    public ItemModel call() throws Exception {
+                        getDao().createOrUpdate(item);
+                        List<ItemModel> history = getDao().queryBuilder()
+                                .where().eq(ItemModel.FIELD_NAME, item.getName())
+                                .and().isNull(ItemModel.FIELD_LIST)
+                                .query();
+                        for (ItemModel historyItem : history) {
+                            copyHistoryRelatedFields(item, historyItem);
+                            getDao().update(historyItem);
+                        }
+                        return null;
+                    }
+                });
+                subscriber.onNext(item);
+                subscriber.onCompleted();
+            }
+        }).subscribeOn(Api.scheduler())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    private void copyHistoryRelatedFields(ItemModel source, ItemModel destination) {
+        destination.setName(source.getName());
+        destination.setCategory(source.getCategory());
+        destination.setPrice(source.getPrice());
+        destination.setQuantityUnit(source.getQuantityUnit());
+    }
 }
