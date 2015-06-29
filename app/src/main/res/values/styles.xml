@@ -19,6 +19,11 @@
         <item name="android:windowBackground">@android:color/white</item>
     </style>
 
+    <style name="AppTheme.Settings">
+        <item name="android:textAppearanceMedium">@style/TextAppearance.AppTheme.Medium</item>
+        <item name="android:textAppearanceSmall">@style/TextAppearance.AppTheme.Small</item>
+    </style>
+
     <string name="font_roboto_light" translatable="false">fonts/Roboto-Light.ttf</string>
     <string name="font_roboto_regular" translatable="false">fonts/Roboto-Regular.ttf</string>
     <string name="font_roboto_medium" translatable="false">fonts/Roboto-Medium.ttf</string>
@@ -82,6 +87,14 @@
         <item name="android:textSize">14sp</item>
     </style>
 
+    <style name="TextAppearance.AppTheme.Medium" parent="@style/TextAppearance.AppTheme.Headline">
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="TextAppearance.AppTheme.Small" parent="@style/TextAppearance.AppTheme.Body1">
+        <item name="android:textColor">@color/text_secondary</item>
+    </style>
+
     <style name="AppWidget" />
 
     <style name="AppWidget.ActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid">
@@ -94,6 +107,7 @@
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorAccent">@color/accent</item>
+        <item name="android:spinnerStyle">@style/AppWidget.SpinnerStyle</item>
     </style>
 
     <style name="AppWidget.MaterialEditText">

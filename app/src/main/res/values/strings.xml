@@ -40,4 +40,21 @@
     <string name="default_category">Uncategorized</string>
     <string name="default_quantity_unit">Units</string>
     <string name="note">Note</string>
+
+    <string name="display_preferences">Look and feel</string>
+    <string name="striked_out_items_in_bottom">Crossed off items at the bottom</string>
+    <string name="summary_striked_out_items_in_bottom">After crossing out an item, move it to the bottom of the list</string>
+    <string name="display_total_cost_summary">Display total cost of a list if it\'s not zero</string>
+    <string name="display_total_cost_title">Display total cost</string>
+    <string name="other">Other</string>
+    <string name="tax_in_percent">Tax in percent</string>
+    <string name="price_with_tax">%1$s (%2$s with tax)</string>
+    <string name="currency_summary">Currency preview: %s</string>
+    <string name="currency">Currency</string>
+    <string name="currency_position">Position</string>
+    <string name="currency_preview">Preview</string>
+    <string-array name="currency_position">
+        <item>Left</item>
+        <item>Right</item>
+    </string-array>
 </resources>

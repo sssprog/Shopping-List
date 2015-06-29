@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/display_preferences">
+        <CheckBoxPreference
+            android:key="@string/prefs_move_striked_out_items_to_bottom"
+            android:summary="@string/summary_striked_out_items_in_bottom"
+            android:title="@string/striked_out_items_in_bottom" />
+
+        <com.sssprog.shoppingliststandalone.ui.settings.CurrencyPreference
+            android:key="@string/prefs_currency"
+            android:summary="%s"
+            android:title="@string/currency" />
+
+        <CheckBoxPreference
+            android:key="@string/prefs_display_total_cost"
+            android:summary="@string/display_total_cost_summary"
+            android:title="@string/display_total_cost_title" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/other">
+        <EditTextPreference
+            android:key="@string/prefs_tax_percent"
+            android:title="@string/tax_in_percent" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

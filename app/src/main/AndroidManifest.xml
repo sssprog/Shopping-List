@@ -35,6 +35,10 @@
             android:name=".ui.itemeditor.ItemEditorActivity"
             android:label="@string/edit_item"
             android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name=".ui.settings.SettingsActivity"
+            android:label="@string/settings"
+            android:theme="@style/AppTheme.Settings" />
 
         <meta-data
             android:name="com.parse.APPLICATION_ID"

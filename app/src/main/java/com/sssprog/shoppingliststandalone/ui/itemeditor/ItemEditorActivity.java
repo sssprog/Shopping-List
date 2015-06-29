@@ -11,7 +11,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
@@ -289,9 +288,7 @@ public class ItemEditorActivity extends BaseMvpActivity<ItemEditorPresenter> {
     }
 
     private void setUnits(List<QuantityUnitModel> units) {
-        ArrayAdapter<QuantityUnitModel> adapter = new ArrayAdapter<>(this, R.layout.spinner_item, units);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        quantitySpinner.setAdapter(adapter);
+        quantitySpinner.setAdapter(ViewUtils.getSpinnerAdapter(this, units));
         int index = findPosition(units, quantityUnitId);
         if (index < 0) { // previous quantity unit was removed
             quantityUnitId = 0;
@@ -311,9 +308,7 @@ public class ItemEditorActivity extends BaseMvpActivity<ItemEditorPresenter> {
     }
 
     private void setCategories(List<CategoryModel> categories) {
-        ArrayAdapter<CategoryModel> adapter = new ArrayAdapter<>(this, R.layout.spinner_item, categories);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        categorySpinner.setAdapter(adapter);
+        categorySpinner.setAdapter(ViewUtils.getSpinnerAdapter(this, categories));
         int index = findPosition(categories, categoryId);
         if (index < 0) { // previous category was removed
             categoryId = 0;

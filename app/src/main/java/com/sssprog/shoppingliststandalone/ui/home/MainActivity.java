@@ -23,9 +23,9 @@ import com.sssprog.shoppingliststandalone.api.database.ItemModel;
 import com.sssprog.shoppingliststandalone.events.ListChangedEvent;
 import com.sssprog.shoppingliststandalone.mvp.PresenterClass;
 import com.sssprog.shoppingliststandalone.ui.BaseMvpActivity;
-import com.sssprog.shoppingliststandalone.ui.dictionary.DictionaryActivity;
 import com.sssprog.shoppingliststandalone.ui.history.HistoryActivity;
 import com.sssprog.shoppingliststandalone.ui.itemeditor.ItemEditorActivity;
+import com.sssprog.shoppingliststandalone.ui.settings.SettingsActivity;
 import com.sssprog.shoppingliststandalone.utils.ViewStateSwitcher;
 import com.sssprog.shoppingliststandalone.utils.ViewUtils;
 
@@ -136,8 +136,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> {
             public boolean onNavigationItemSelected(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.settings:
-                        startActivity(DictionaryActivity.createIntent(MainActivity.this,
-                                DictionaryActivity.DictionaryType.CATEGORY));
+                        startActivity(new Intent(MainActivity.this, SettingsActivity.class));
                         break;
                     default:
                         listsFragment.onNavigationItemSelected(item);

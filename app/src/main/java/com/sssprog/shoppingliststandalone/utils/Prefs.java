@@ -3,8 +3,13 @@ package com.sssprog.shoppingliststandalone.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 
-import java.util.Calendar;
+import com.sssprog.shoppingliststandalone.R;
+
+import java.math.BigDecimal;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 
 public class Prefs {
 	
@@ -20,7 +25,11 @@ public class Prefs {
 	}
 
 	private static void setDefaults() {
-
+		if (!contains(R.string.prefs_currency)) {
+			String symbol = DecimalFormatSymbols.getInstance(Locale.getDefault()).getCurrencySymbol();
+			putString(R.string.prefs_currency, CurrencyHelper.toString(
+					new CurrencyHelper.Currency(symbol, CurrencyHelper.CurrencyPosition.RIGHT)));
+		}
 	}
 
 	public static void putString(int key, String value) {
@@ -82,5 +91,24 @@ public class Prefs {
     public static SharedPreferences getSharedPreferences() {
         return settings;
     }
+
+	/**
+	 * @return tax percent, or 0 if tax is not specified
+	 */
+	public static BigDecimal getTaxPercent() {
+		String str = getString(R.string.prefs_tax_percent);
+		if (TextUtils.isEmpty(str)) {
+			return BigDecimal.ZERO;
+		}
+		try {
+			BigDecimal tax = new BigDecimal(str);
+			if (NumberUtils.numberLess(tax, 0)) {
+				tax = BigDecimal.ZERO;
+			}
+			return tax;
+		} catch (NumberFormatException e) {
+			return BigDecimal.ZERO;
+		}
+	}
 
 }

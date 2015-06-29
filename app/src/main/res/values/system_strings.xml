@@ -5,4 +5,8 @@
 
 
     <string name="pref_current_list_id" translatable="false">pref_current_list_id</string>
+    <string name="prefs_move_striked_out_items_to_bottom" translatable="false">prefs_move_striked_out_items_to_bottom</string>
+    <string name="prefs_currency" translatable="false">prefs_currency</string>
+    <string name="prefs_display_total_cost" translatable="false">prefs_display_total_cost</string>
+    <string name="prefs_tax_percent" translatable="false">prefs_tax_percent</string>
 </resources>

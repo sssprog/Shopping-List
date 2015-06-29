@@ -1,5 +1,8 @@
 package com.sssprog.shoppingliststandalone.utils;
 
+import com.sssprog.shoppingliststandalone.App;
+import com.sssprog.shoppingliststandalone.R;
+
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
@@ -50,7 +53,30 @@ public class NumberUtils {
     }
 
     public static String priceWithCurrency(BigDecimal price) {
-        return priceToString(price);
+        CurrencyHelper.Currency currency = CurrencyHelper.parseCurrency(Prefs.getString(R.string.prefs_currency));
+        return priceWithCurrency(price, currency);
+    }
+
+    public static String priceWithTax(BigDecimal price) {
+        return App.getInstance().getString(R.string.price_with_tax,
+                priceWithCurrency(price), priceWithCurrency(applyTax(price)));
+    }
+
+    public static String priceWithCurrency(BigDecimal price, CurrencyHelper.Currency currency) {
+        String result = priceToString(price);
+        if (currency.symbol != null) {
+            if (currency.position == CurrencyHelper.CurrencyPosition.LEFT) {
+                result = currency.symbol + result;
+            } else {
+                result = result + currency.symbol;
+            }
+        }
+        return result;
+    }
+
+    public static BigDecimal applyTax(BigDecimal cost) {
+        BigDecimal percent = Prefs.getTaxPercent().divide(BigDecimal.valueOf(100));
+        return roundPrice(cost.add(cost.multiply(percent)));
     }
 
     public static boolean numberGreater(BigDecimal number, int value) {

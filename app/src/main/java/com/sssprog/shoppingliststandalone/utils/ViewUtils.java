@@ -10,9 +10,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.view.View;
+import android.widget.ArrayAdapter;
 
 import com.sssprog.shoppingliststandalone.Config;
 import com.sssprog.shoppingliststandalone.R;
+
+import java.util.List;
 
 public class ViewUtils {
 
@@ -87,6 +90,12 @@ public class ViewUtils {
                 ViewUtils.getDrawable(context, R.drawable.abc_spinner_mtrl_am_alpha).mutate());
         DrawableCompat.setTint(indicatorPressed, context.getResources().getColor(R.color.accent));
         return new LayerDrawable(new Drawable[] { linePressed, indicatorPressed });
+    }
+
+    public static <T> ArrayAdapter<T> getSpinnerAdapter(Context context, List<T> items) {
+        ArrayAdapter<T> adapter = new ArrayAdapter<>(context, R.layout.spinner_item, items);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        return adapter;
     }
 
 }

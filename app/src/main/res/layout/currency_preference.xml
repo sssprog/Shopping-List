@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="24dp"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
+        android:paddingTop="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/currency"
+            android:textAppearance="@style/TextAppearance.AppTheme.Caption"
+            android:textColor="@color/text_secondary" />
+
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/symbol"
+            style="@style/AppWidget.MaterialEditText.NoFloatingLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/currency_position"
+            android:textAppearance="@style/TextAppearance.AppTheme.Caption"
+            android:textColor="@color/text_secondary" />
+
+        <com.sssprog.shoppingliststandalone.views.AppSpinner
+            android:id="@+id/positionSpinner"
+            style="@style/AppWidget.SpinnerStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/currency_preview"
+                android:textAppearance="@style/TextAppearance.AppTheme.Caption"
+                android:textColor="@color/text_secondary" />
+
+            <TextView
+                android:id="@+id/preview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="12dp"
+                android:textAppearance="@style/TextAppearance.AppTheme.Subhead"
+                tools:text="1.20$" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>
