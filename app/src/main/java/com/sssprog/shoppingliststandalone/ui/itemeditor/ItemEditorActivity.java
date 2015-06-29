@@ -3,10 +3,12 @@ package com.sssprog.shoppingliststandalone.ui.itemeditor;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -44,6 +46,9 @@ public class ItemEditorActivity extends BaseMvpActivity<ItemEditorPresenter> {
     private static final String PARAM_CATEGORY = "PARAM_CATEGORY";
     private static final String PARAM_QUANTITY_UNIT = "PARAM_QUANTITY_UNIT";
 
+    private static final int DELAY_BEFORE_STARTING_CONTINUES_QUANTITY_CHANGE = 600;
+    private static final int DELAY_BETWEEN_CONTINUES_QUANTITY_CHANGES = 35;
+
     @InjectView(R.id.itemName)
     EditText itemNameView;
     @InjectView(R.id.quantityMinusButton)
@@ -72,6 +77,7 @@ public class ItemEditorActivity extends BaseMvpActivity<ItemEditorPresenter> {
     private boolean isItemLoadedToViews;
     private long categoryId;
     private long quantityUnitId;
+    private Handler handler;
 
     public static Intent createIntent(Context context, long itemId, boolean isHistoryItem) {
         return new Intent(context, ItemEditorActivity.class)
@@ -157,6 +163,7 @@ public class ItemEditorActivity extends BaseMvpActivity<ItemEditorPresenter> {
         quantityView.addTextChangedListener(textWatcher);
         priceView.addTextChangedListener(textWatcher);
         updateTotalCost();
+        initPlusMinusButtons();
     }
 
     private void updateTotalCost() {
@@ -164,6 +171,63 @@ public class ItemEditorActivity extends BaseMvpActivity<ItemEditorPresenter> {
         BigDecimal price = NumberUtils.stringToPrice(priceView.getText().toString());
         BigDecimal total = NumberUtils.roundPrice(price.multiply(quantity));
         totalCost.setText(getString(R.string.total_cost, NumberUtils.priceWithCurrency(total)));
+    }
+
+    private void initPlusMinusButtons() {
+        handler = new Handler();
+        View.OnClickListener plusMinusClickListener = new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                onQuantityChanged((BigDecimal) v.getTag());
+            }
+        };
+        quantityMinusButton.setTag(new BigDecimal(-1));
+        quantityPlusButton.setTag(BigDecimal.ONE);
+        quantityMinusButton.setOnClickListener(plusMinusClickListener);
+        quantityPlusButton.setOnClickListener(plusMinusClickListener);
+
+        View.OnTouchListener touchListener = new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        quantityRunnable.quantityDelta = (BigDecimal) v.getTag();
+                        handler.postDelayed(quantityRunnable, DELAY_BEFORE_STARTING_CONTINUES_QUANTITY_CHANGE);
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        handler.removeCallbacks(quantityRunnable);
+                        break;
+                    case MotionEvent.ACTION_CANCEL:
+                        handler.removeCallbacks(quantityRunnable);
+                        break;
+                }
+                return false;
+            }
+        };
+        quantityMinusButton.setOnTouchListener(touchListener);
+        quantityPlusButton.setOnTouchListener(touchListener);
+    }
+
+    private class QuantityRunnable implements Runnable {
+
+        public BigDecimal quantityDelta;
+
+        @Override
+        public void run() {
+            onQuantityChanged(quantityDelta);
+            handler.postDelayed(this, DELAY_BETWEEN_CONTINUES_QUANTITY_CHANGES);
+        }
+    }
+
+    private final QuantityRunnable quantityRunnable = new QuantityRunnable();
+
+    private void onQuantityChanged(BigDecimal quantityDelta) {
+        BigDecimal quantity = NumberUtils.stringToQuantity(quantityView.getText().toString());
+        quantity = quantity.add(quantityDelta);
+        if (NumberUtils.numberGreater(quantity, 0)) {
+            quantityView.setText(NumberUtils.quantityToString(quantity));
+        }
     }
 
     private void updateMenuState() {

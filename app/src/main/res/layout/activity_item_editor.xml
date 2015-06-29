@@ -14,13 +14,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingBottom="16dp"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp">
+            android:paddingBottom="16dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="16dp"
                 android:text="@string/item_name"
                 android:textAppearance="@style/TextAppearance.AppTheme.Caption"
@@ -31,12 +31,16 @@
                 style="@style/AppWidget.MaterialEditText.NoFloatingLabel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
                 android:hint="@string/item_name"
                 android:inputType="textCapSentences" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="@dimen/item_editor_group_margin"
                 android:text="@string/quantity"
                 android:textAppearance="@style/TextAppearance.AppTheme.Caption"
@@ -50,13 +54,13 @@
                     android:id="@+id/quantityContainer"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="8dp"
                     android:layout_weight="1">
 
                     <ImageButton
                         android:id="@+id/quantityMinusButton"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
+                        android:layout_marginLeft="4dp"
                         android:background="?selectableItemBackgroundBorderless"
                         android:src="@drawable/ic_minus_grey600_24dp" />
 
@@ -82,6 +86,7 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
                     android:layout_weight="1">
 
                     <com.sssprog.shoppingliststandalone.views.AppSpinner
@@ -94,6 +99,7 @@
                         android:id="@+id/editQuantityUnitsButton"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
+                        android:layout_marginRight="4dp"
                         android:background="?selectableItemBackgroundBorderless"
                         android:src="@drawable/ic_pencil_grey600_24dp" />
 
@@ -103,6 +109,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="@dimen/item_editor_group_margin"
                 android:text="@string/price"
                 android:textAppearance="@style/TextAppearance.AppTheme.Caption"
@@ -110,7 +118,9 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginRight="@dimen/activity_horizontal_margin">
 
                 <com.rengwuxian.materialedittext.MaterialEditText
                     android:id="@+id/price"
@@ -125,7 +135,7 @@
                     android:id="@+id/totalCost"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
                     android:layout_weight="1"
                     android:textAppearance="@style/TextAppearance.AppTheme.Subhead"
                     tools:text="Total: 9$" />
@@ -135,6 +145,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="@dimen/item_editor_group_margin"
                 android:text="@string/category"
                 android:textAppearance="@style/TextAppearance.AppTheme.Caption"
@@ -148,12 +160,14 @@
                     android:id="@+id/categorySpinner"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
                     android:layout_weight="1" />
 
                 <ImageButton
                     android:id="@+id/editCategoriesButton"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
+                    android:layout_marginRight="4dp"
                     android:background="?selectableItemBackgroundBorderless"
                     android:src="@drawable/ic_pencil_grey600_24dp" />
 
@@ -163,6 +177,8 @@
                 android:id="@+id/noteContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
                 android:orientation="vertical">
 
                 <TextView
