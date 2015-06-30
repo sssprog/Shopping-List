@@ -30,6 +30,9 @@ public class Prefs {
 			putString(R.string.prefs_currency, CurrencyHelper.toString(
 					new CurrencyHelper.Currency(symbol, CurrencyHelper.CurrencyPosition.RIGHT)));
 		}
+		if (!contains(R.string.prefs_list_row_size)) {
+			putString(R.string.prefs_list_row_size, "0");
+		}
 	}
 
 	public static void putString(int key, String value) {
@@ -109,6 +112,23 @@ public class Prefs {
 		} catch (NumberFormatException e) {
 			return BigDecimal.ZERO;
 		}
+	}
+
+	private static int getListOptionValue(int key, int maxValue) {
+		int result;
+		try {
+			result = Integer.parseInt(getString(key));
+		} catch (NumberFormatException e) {
+			result = 0;
+		}
+		if (result < 0 || result > maxValue) {
+			result = 0;
+		}
+		return result;
+	}
+
+	public static boolean isListHeightAlwaysLarge() {
+		return getListOptionValue(R.string.prefs_list_row_size, 1) == 1;
 	}
 
 }

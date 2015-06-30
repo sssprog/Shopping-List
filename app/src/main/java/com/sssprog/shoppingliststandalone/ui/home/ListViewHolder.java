@@ -13,6 +13,7 @@ import butterknife.InjectView;
 
 public class ListViewHolder extends RecyclerView.ViewHolder {
 
+    View root;
     @InjectView(R.id.container)
     View container;
     @InjectView(R.id.title)
@@ -25,6 +26,7 @@ public class ListViewHolder extends RecyclerView.ViewHolder {
     public ListViewHolder(View view, ListItemListener itemListener) {
         super(view);
         ButterKnife.inject(this, view);
+        root = view;
         ViewUtils.setBackground(container, ViewUtils.makeTouchFeedbackDrawable(view.getContext(), Color.WHITE));
         this.listener = itemListener;
         container.setOnClickListener(new View.OnClickListener() {

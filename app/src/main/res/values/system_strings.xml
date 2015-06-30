@@ -9,4 +9,5 @@
     <string name="prefs_currency" translatable="false">prefs_currency</string>
     <string name="prefs_display_total_cost" translatable="false">prefs_display_total_cost</string>
     <string name="prefs_tax_percent" translatable="false">prefs_tax_percent</string>
+    <string name="prefs_list_row_size" translatable="false">prefs_list_row_size</string>
 </resources>

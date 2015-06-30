@@ -7,6 +7,13 @@
             android:summary="@string/summary_striked_out_items_in_bottom"
             android:title="@string/striked_out_items_in_bottom" />
 
+        <com.sssprog.shoppingliststandalone.ui.settings.AppListPreference
+            android:entries="@array/list_row_size_entries"
+            android:entryValues="@array/list_row_size_values"
+            android:key="@string/prefs_list_row_size"
+            android:summary="%s"
+            android:title="@string/list_row_size" />
+
         <com.sssprog.shoppingliststandalone.ui.settings.CurrencyPreference
             android:key="@string/prefs_currency"
             android:summary="%s"

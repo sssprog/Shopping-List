@@ -89,6 +89,13 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        // Settings could have been updated and adapter depends on settings
+        adapter.update();
+    }
+
+    @Override
     protected int getToolbarShadowContainerId() {
         return R.id.contentContainer;
     }
@@ -152,6 +159,14 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> {
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
                 return false;
+            }
+
+            @Override
+            public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                if (viewHolder instanceof CategoryViewHolder) {
+                    return 0;
+                }
+                return super.getSwipeDirs(recyclerView, viewHolder);
             }
 
             @Override

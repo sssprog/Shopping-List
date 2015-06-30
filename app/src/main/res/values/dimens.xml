@@ -10,4 +10,6 @@
     <dimen name="history_swipe_to_delete_show_dividers_distance">100dp</dimen>
     <dimen name="fab_margin">0dp</dimen>
     <dimen name="item_editor_group_margin">24dp</dimen>
+    <dimen name="list_item_height_one_line">48dp</dimen>
+    <dimen name="list_item_height_two_lines">72dp</dimen>
 </resources>

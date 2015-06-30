@@ -15,7 +15,7 @@ public class ItemModel implements ModelWithName {
 
     public static final String TABLE_NAME = "item";
     public static final String FIELD_ID = "_id";
-    public static final String FIELD_STRIKED_OUT = "striked_out";
+    public static final String FIELD_STRUCK_OUT = "striked_out";
     public static final String FIELD_QUANTITY = "quantity";
     public static final String FIELD_LIST = "list_id";
     public static final String FIELD_NAME = "name";
@@ -39,8 +39,8 @@ public class ItemModel implements ModelWithName {
     @DatabaseField(columnName = FIELD_CATEGORY, foreign = true, foreignAutoRefresh = true)
     private CategoryModel category;
 
-    @DatabaseField(columnName = FIELD_STRIKED_OUT)
-    private boolean strikedOut;
+    @DatabaseField(columnName = FIELD_STRUCK_OUT)
+    private boolean struckOut;
 
     @DatabaseField(columnName = FIELD_QUANTITY, useGetSet = true)
     private BigDecimal quantity;
@@ -84,12 +84,12 @@ public class ItemModel implements ModelWithName {
         this.category = category;
     }
 
-    public boolean isStrikedOut() {
-        return strikedOut;
+    public boolean isStruckOut() {
+        return struckOut;
     }
 
-    public void setStrikedOut(boolean strikedOut) {
-        this.strikedOut = strikedOut;
+    public void setStruckOut(boolean struckOut) {
+        this.struckOut = struckOut;
     }
 
     public ListModel getList() {
