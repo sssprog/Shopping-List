@@ -3,6 +3,7 @@
     android:id="@+id/drawerLayout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
@@ -12,20 +13,52 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <FrameLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="?actionBarSize">
+            android:layout_marginTop="?actionBarSize"
+            android:orientation="vertical">
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
                 android:clipToPadding="false"
                 android:paddingBottom="8dp"
                 android:paddingTop="8dp"
                 android:scrollbars="vertical" />
-        </FrameLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider_light" />
+
+            <LinearLayout
+                android:id="@+id/totalCostContainer"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:background="#EEE"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/totalCost"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.AppTheme.Subhead"
+                    tools:text="Total: 10$" />
+
+                <TextView
+                    android:id="@+id/inCartCost"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.AppTheme.Subhead"
+                    tools:text="In cart: 10$" />
+
+            </LinearLayout>
+
+        </LinearLayout>
 
         <include layout="@layout/toolbar" />
     </FrameLayout>

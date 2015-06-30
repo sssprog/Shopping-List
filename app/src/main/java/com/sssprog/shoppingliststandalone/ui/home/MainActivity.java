@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.sssprog.shoppingliststandalone.R;
 import com.sssprog.shoppingliststandalone.api.database.ItemModel;
@@ -26,9 +27,12 @@ import com.sssprog.shoppingliststandalone.ui.BaseMvpActivity;
 import com.sssprog.shoppingliststandalone.ui.history.HistoryActivity;
 import com.sssprog.shoppingliststandalone.ui.itemeditor.ItemEditorActivity;
 import com.sssprog.shoppingliststandalone.ui.settings.SettingsActivity;
+import com.sssprog.shoppingliststandalone.utils.NumberUtils;
+import com.sssprog.shoppingliststandalone.utils.Prefs;
 import com.sssprog.shoppingliststandalone.utils.ViewStateSwitcher;
 import com.sssprog.shoppingliststandalone.utils.ViewUtils;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import butterknife.InjectView;
@@ -47,6 +51,13 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> {
     @InjectView(R.id.recyclerView)
     RecyclerView recyclerView;
 
+    @InjectView(R.id.totalCostContainer)
+    View totalCostContainer;
+    @InjectView(R.id.totalCost)
+    TextView totalCost;
+    @InjectView(R.id.inCartCost)
+    TextView inCartCost;
+
     private ActionBarDrawerToggle drawerToggle;
     private ListsFragment listsFragment;
     private ViewStateSwitcher stateSwitcher;
@@ -59,14 +70,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        adapter = new ListAdapter(this, new ListAdapter.ListAdapterListener() {
-            @Override
-            public boolean onItemLongClick(ItemModel item) {
-                startActivityForResult(ItemEditorActivity.createIntent(MainActivity.this, item.getId(), false),
-                        REQUEST_EDIT_ITEM);
-                return true;
-            }
-        });
+        adapter = new ListAdapter(this, new AdapterListener());
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
@@ -263,6 +267,44 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> {
                     loadList();
                 }
                 break;
+        }
+    }
+
+    private class AdapterListener implements ListAdapter.ListAdapterListener {
+
+        @Override
+        public boolean onItemLongClick(ItemModel item) {
+            startActivityForResult(ItemEditorActivity.createIntent(MainActivity.this, item.getId(), false),
+                    REQUEST_EDIT_ITEM);
+            return true;
+        }
+
+        @Override
+        public void onUpdateTotalCost() {
+            updateTotalCost();
+        }
+    }
+
+    private void updateTotalCost() {
+        if (!Prefs.getBoolean(R.string.prefs_display_total_cost)) {
+            totalCostContainer.setVisibility(View.GONE);
+        } else {
+            BigDecimal total = adapter.getTotalCost();
+            if (NumberUtils.numberLessOrEquals(total, 0)) {
+                totalCostContainer.setVisibility(View.GONE);
+            } else {
+                totalCostContainer.setVisibility(View.VISIBLE);
+                BigDecimal inCart = adapter.getInCartTotalCost();
+                BigDecimal remaining = total.subtract(inCart);
+                if (NumberUtils.numberEquals(Prefs.getTaxPercent(), 0)) {
+                    String text = NumberUtils.priceWithCurrency(inCart) + " / " + NumberUtils.priceWithCurrency(total);
+                    totalCost.setText(getString(R.string.total_cost, text));
+                    inCartCost.setText(getString(R.string.remaining_cost, NumberUtils.priceWithCurrency(remaining)));
+                } else {
+                    totalCost.setText(getString(R.string.total_cost, NumberUtils.priceWithTax(total)));
+                    inCartCost.setText(getString(R.string.in_cart_cost, NumberUtils.priceWithTax(inCart)));
+                }
+            }
         }
     }
 }

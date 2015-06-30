@@ -18,6 +18,7 @@ import com.sssprog.shoppingliststandalone.utils.NumberUtils;
 import com.sssprog.shoppingliststandalone.utils.Prefs;
 import com.sssprog.shoppingliststandalone.utils.Utils;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -172,6 +173,7 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             items.add(new AdapterItem(null, context.getString(R.string.crossed_off)));
             addItems(struckOut);
         }
+        listener.onUpdateTotalCost();
     }
 
     private void addItems(List<ItemModel> list) {
@@ -184,6 +186,26 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         updateAdapterItems();
         useAlwaysTwoLineHeight = Prefs.isListHeightAlwaysLarge();
         notifyDataSetChanged();
+    }
+
+    public BigDecimal getTotalCost() {
+        BigDecimal cost = BigDecimal.ZERO;
+        for (AdapterItem item : items) {
+            if (item.item != null) {
+                cost = cost.add(item.item.getTotalPrice());
+            }
+        }
+        return cost;
+    }
+
+    public BigDecimal getInCartTotalCost() {
+        BigDecimal cost = BigDecimal.ZERO;
+        for (AdapterItem item : items) {
+            if (item.item != null && item.item.isStruckOut()) {
+                cost = cost.add(item.item.getTotalPrice());
+            }
+        }
+        return cost;
     }
 
     @Override
@@ -201,6 +223,8 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
 
     public interface ListAdapterListener {
         boolean onItemLongClick(ItemModel item);
+
+        void onUpdateTotalCost();
     }
 
     private static class AdapterItem {
