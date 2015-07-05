@@ -31,7 +31,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.sssprog.shoppingliststandalone.R;
 import com.sssprog.shoppingliststandalone.api.database.ItemModel;
 import com.sssprog.shoppingliststandalone.mvp.PresenterClass;
@@ -79,6 +78,7 @@ public class HistoryActivity extends BaseMvpActivity<HistoryPresenter> {
 
     private List<ItemModel> history = new ArrayList<>();
     private final Set<String> listItems = new HashSet<>();
+    private final Set<String> existingItemNames = new HashSet<>();
     private ItemModel lastDeletedItem;
 
     public static Intent createIntent(Context context, long listId) {
@@ -157,7 +157,7 @@ public class HistoryActivity extends BaseMvpActivity<HistoryPresenter> {
                 int position = viewHolder.getAdapterPosition();
                 lastDeletedItem = adapter.removeItem(position);
                 history.remove(lastDeletedItem);
-                updateListAndState();
+                updateList();
                 getPresenter().deleteItem(lastDeletedItem);
                 Snackbar.make(findViewById(android.R.id.content), R.string.item_was_deleted, Snackbar.LENGTH_LONG)
                         .setAction(R.string.undo, undoDeletion)
@@ -175,7 +175,7 @@ public class HistoryActivity extends BaseMvpActivity<HistoryPresenter> {
             if (canceled) {
                 history.add(lastDeletedItem);
                 sortHistory();
-                updateListAndState();
+                updateList();
             }
         }
     };
@@ -204,7 +204,7 @@ public class HistoryActivity extends BaseMvpActivity<HistoryPresenter> {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 updateClearTextButton();
-                updateListAndState();
+                updateState();
             }
 
             @Override
@@ -305,57 +305,47 @@ public class HistoryActivity extends BaseMvpActivity<HistoryPresenter> {
                 return !listItems.contains(input.getName().toLowerCase());
             }
         }));
+        existingItemNames.clear();
+        existingItemNames.addAll(Collections2.transform(history, new Function<ItemModel, String>() {
+            @Override
+            public String apply(ItemModel input) {
+                return input.getName().toLowerCase();
+            }
+        }));
         sortHistory();
-        updateListAndState();
+        updateList();
     }
 
     void onItemAdded(ItemModel item) {
         adapter.selectItem(item);
         history.add(item);
         sortHistory();
-        updateListAndState();
+        updateList();
     }
 
     private void sortHistory() {
         Utils.sortByName(history);
     }
 
-    private void updateListAndState() {
+    private void updateList() {
+        adapter.setItems(history);
+        updateState();
+    }
+
+    private void updateState() {
         String text = newItemView.getText().toString();
         itemInListText.setText(Html.fromHtml(getString(R.string.item_is_in_list_already, text)));
         addItemText.setText(Html.fromHtml(getString(R.string.add_item_to_list, text)));
-        updateList();
-        if (adapter.getItemCount() == 0) {
-            if (text.isEmpty()) {
+        if (text.isEmpty()) {
+            if (adapter.getItemCount() == 0) {
                 stateSwitcher.switchToEmpty(true);
             } else {
-                stateSwitcher.switchToState(listItems.contains(text.toLowerCase()) ? STATE_ITEM_IS_IN_LIST :
-                        STATE_ADD_ITEM, true);
+                stateSwitcher.switchToMain(true);
             }
         } else {
-            stateSwitcher.switchToMain(true);
+            stateSwitcher.switchToState(existingItemNames.contains(text.toLowerCase()) ? STATE_ITEM_IS_IN_LIST :
+                    STATE_ADD_ITEM, true);
         }
-    }
-
-    private void updateList() {
-        final String query = newItemView.getText().toString().trim().toLowerCase();
-        if (query.isEmpty()) {
-            adapter.setItems(history, "");
-            return;
-        }
-        Iterable<ItemModel> items = Iterables.filter(history, new Predicate<ItemModel>() {
-            @Override
-            public boolean apply(ItemModel item) {
-                String[] words = item.getName().toLowerCase().split("\\W");
-                for (String word : words) {
-                    if (word.startsWith(query)) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-        });
-        adapter.setItems(Lists.newArrayList(items), query);
     }
 
     @Override
