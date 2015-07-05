@@ -1,9 +1,13 @@
 package com.sssprog.shoppingliststandalone.ui.history;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Canvas;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,13 +15,13 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.Editable;
 import android.text.Html;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -44,6 +48,7 @@ import java.util.List;
 import java.util.Set;
 
 import butterknife.InjectView;
+import butterknife.OnClick;
 
 @PresenterClass(HistoryPresenter.class)
 public class HistoryActivity extends BaseMvpActivity<HistoryPresenter> {
@@ -55,6 +60,7 @@ public class HistoryActivity extends BaseMvpActivity<HistoryPresenter> {
     private static final String STATE_ADD_ITEM = "add_item";
 
     private static final int REQUEST_EDIT_ITEM = 0;
+    private static final int REQUEST_VOICE_INPUT = 1;
 
     @InjectView(R.id.recyclerView)
     RecyclerView recyclerView;
@@ -214,6 +220,17 @@ public class HistoryActivity extends BaseMvpActivity<HistoryPresenter> {
                 newItemView.setText("");
             }
         });
+        if (!isSpeechRecognitionAvailable()) {
+            micButton.setVisibility(View.GONE);
+        }
+    }
+
+    @OnClick(R.id.micButton)
+    public void onMicButtonClick() {
+        try {
+            startActivityForResult(getSpeechRecognizerIntent(), REQUEST_VOICE_INPUT);
+        } catch (ActivityNotFoundException e) {
+        }
     }
 
     private void updateClearTextButton() {
@@ -239,8 +256,6 @@ public class HistoryActivity extends BaseMvpActivity<HistoryPresenter> {
         item.setName(newItemView.getText().toString().trim());
         getPresenter().addItem(item);
         newItemView.setText("");
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(newItemView.getWindowToken(), 0);
     }
 
     void onItemsAdded() {
@@ -353,7 +368,35 @@ public class HistoryActivity extends BaseMvpActivity<HistoryPresenter> {
             case REQUEST_EDIT_ITEM:
                 getPresenter().loadItems();
                 break;
+            case REQUEST_VOICE_INPUT:
+                if (data != null) {
+                    ArrayList<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                    if (results != null && !results.isEmpty()) {
+                        String text = results.get(0);
+                        if (!TextUtils.isEmpty(text)) {
+                            String firstLetter = "" + text.charAt(0);
+                            text = firstLetter.toUpperCase() + text.substring(1);
+                            newItemView.setText(text);
+                            newItemView.setSelection(0, text.length());
+                            newItemView.requestFocus();
+                        }
+                    }
+                }
+                break;
         }
+    }
+
+    private boolean isSpeechRecognitionAvailable() {
+        List<ResolveInfo> list = getPackageManager().queryIntentActivities(getSpeechRecognizerIntent(),
+                PackageManager.MATCH_DEFAULT_ONLY);
+        return !list.isEmpty();
+    }
+
+    private Intent getSpeechRecognizerIntent() {
+        return new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+                .putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                .putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.speech_input_prompt))
+                .putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
     }
 
 }

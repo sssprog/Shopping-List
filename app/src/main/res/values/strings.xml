@@ -66,6 +66,7 @@
     <string name="list_row_size">List row size</string>
     <string name="in_cart_cost">In cart: %s</string>
     <string name="remaining_cost">Remaining: %s</string>
+    <string name="speech_input_prompt">Say item name</string>
 
 
     <string-array name="list_row_size_values" translatable="false">
