@@ -67,6 +67,7 @@
     <string name="in_cart_cost">In cart: %s</string>
     <string name="remaining_cost">Remaining: %s</string>
     <string name="speech_input_prompt">Say item name</string>
+    <string name="delete_crossed_off_items">Delete crossed off items</string>
 
 
     <string-array name="list_row_size_values" translatable="false">

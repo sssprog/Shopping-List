@@ -64,6 +64,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> {
     private ListAdapter adapter;
     private ItemModel lastDeletedItem;
     private Snackbar deletionSnackbar;
+    private MenuItem deleteCrossedItemsMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,7 +108,14 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        deleteCrossedItemsMenu = menu.findItem(R.id.action_delete_crossed_items);
         return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        deleteCrossedItemsMenu.setVisible(adapter.hasCrossedItems());
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -115,6 +123,10 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> {
         switch (item.getItemId()) {
             case R.id.action_add_items:
                 addItems();
+                return true;
+            case R.id.action_delete_crossed_items:
+                getPresenter().deleteItems(adapter.removeCrossedItems());
+                updateListState();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -280,8 +292,9 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> {
         }
 
         @Override
-        public void onUpdateTotalCost() {
+        public void onItemsChanged() {
             updateTotalCost();
+            supportInvalidateOptionsMenu();
         }
     }
 

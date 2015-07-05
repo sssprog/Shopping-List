@@ -5,6 +5,7 @@ import com.sssprog.shoppingliststandalone.api.database.ItemModel;
 import com.sssprog.shoppingliststandalone.api.services.ItemService;
 import com.sssprog.shoppingliststandalone.mvp.Presenter;
 
+import java.util.Collection;
 import java.util.List;
 
 public class MainPresenter extends Presenter<MainActivity> {
@@ -38,6 +39,10 @@ public class MainPresenter extends Presenter<MainActivity> {
 
     public void finishDeletion() {
         ItemService.getInstance().finishDeletion();
+    }
+
+    public void deleteItems(Collection<ItemModel> items) {
+        ItemService.getInstance().deleteItems(items).subscribe(new SimpleRxSubscriber<Void>());
     }
 
 }

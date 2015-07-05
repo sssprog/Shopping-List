@@ -151,4 +151,23 @@ public class ItemService extends BaseModelService<ItemModel> {
         destination.setPrice(source.getPrice());
         destination.setQuantityUnit(source.getQuantityUnit());
     }
+
+    public Observable<Void> deleteItems(final Collection<ItemModel> items) {
+        return Observable
+                .create(new Observable.OnSubscribe<Void>() {
+                    @Override
+                    public void call(final Subscriber<? super Void> subscriber) {
+                        DatabaseUtils.callInTransaction(new Callable<Void>() {
+                            @Override
+                            public Void call() throws Exception {
+                                getDao().delete(items);
+                                return null;
+                            }
+                        });
+                        subscriber.onCompleted();
+                    }
+                })
+                .subscribeOn(Api.scheduler())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
 }

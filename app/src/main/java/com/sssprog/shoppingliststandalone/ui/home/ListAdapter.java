@@ -8,7 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 import com.sssprog.shoppingliststandalone.R;
 import com.sssprog.shoppingliststandalone.api.SimpleRxSubscriber;
@@ -60,6 +63,27 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     public void addItem(ItemModel item) {
         listItems.add(item);
         update();
+    }
+
+    public List<ItemModel> removeCrossedItems() {
+        List<ItemModel> crossedItems = new ArrayList<>(Collections2.filter(listItems, new Predicate<ItemModel>() {
+            @Override
+            public boolean apply(ItemModel input) {
+                return input.isStruckOut();
+            }
+        }));
+        listItems.removeAll(crossedItems);
+        update();
+        return crossedItems;
+    }
+
+    public boolean hasCrossedItems() {
+        return Iterables.any(listItems, new Predicate<ItemModel>() {
+            @Override
+            public boolean apply(ItemModel input) {
+                return input.isStruckOut();
+            }
+        });
     }
 
     @Override
@@ -173,7 +197,7 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             items.add(new AdapterItem(null, context.getString(R.string.crossed_off)));
             addItems(struckOut);
         }
-        listener.onUpdateTotalCost();
+        listener.onItemsChanged();
     }
 
     private void addItems(List<ItemModel> list) {
@@ -224,7 +248,7 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     public interface ListAdapterListener {
         boolean onItemLongClick(ItemModel item);
 
-        void onUpdateTotalCost();
+        void onItemsChanged();
     }
 
     private static class AdapterItem {
