@@ -15,7 +15,6 @@ import com.sssprog.shoppingliststandalone.utils.Utils;
 import java.util.List;
 
 import rx.Observable;
-import rx.functions.Func3;
 
 public class ItemEditorPresenter extends Presenter<ItemEditorActivity> {
 
@@ -23,23 +22,15 @@ public class ItemEditorPresenter extends Presenter<ItemEditorActivity> {
         Observable.zip(ItemService.getInstance().get(itemId),
                 CategoryService.getInstance().getAll(),
                 QuantityUnitService.getInstance().getAll(),
-                new Func3<ItemModel, List<CategoryModel>, List<QuantityUnitModel>, Data>() {
-                    @Override
-                    public Data call(ItemModel item, List<CategoryModel> categories, List<QuantityUnitModel> units) {
-                        Utils.sortByName(categories);
-                        Utils.sortByName(units);
-                        return new Data(item, addDefaultCategory(categories), addDefaultQuantityUnit(units));
-                    }
+                (item, categories, units) -> {
+                    Utils.sortByName(categories);
+                    Utils.sortByName(units);
+                    return new Data(item, addDefaultCategory(categories), addDefaultQuantityUnit(units));
                 })
                 .subscribe(new SimpleRxSubscriber<Data>() {
                     @Override
                     public void onNext(final Data data) {
-                        runViewAction(new Runnable() {
-                            @Override
-                            public void run() {
-                                getView().onDataLoaded(data.item, data.categories, data.units);
-                            }
-                        });
+                        runViewAction(() -> getView().onDataLoaded(data.item, data.categories, data.units));
                     }
                 });
     }
@@ -62,12 +53,7 @@ public class ItemEditorPresenter extends Presenter<ItemEditorActivity> {
         ItemService.getInstance().saveAndUpdateHistory(item).subscribe(new SimpleRxSubscriber<ItemModel>() {
             @Override
             public void onCompleted() {
-                runViewAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        getView().onItemSaved();
-                    }
-                });
+                runViewAction(() -> getView().onItemSaved());
             }
         });
     }

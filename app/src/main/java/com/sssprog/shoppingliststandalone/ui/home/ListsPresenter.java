@@ -9,20 +9,13 @@ import com.sssprog.shoppingliststandalone.utils.Prefs;
 
 import java.util.List;
 
-import rx.functions.Action0;
-
 public class ListsPresenter extends Presenter<ListsFragment> {
 
     void loadLists() {
         ListService.getInstance().getAll().subscribe(new SimpleRxSubscriber<List<ListModel>>() {
             @Override
             public void onNext(final List<ListModel> result) {
-                runViewAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        getView().onListsLoaded(result);
-                    }
-                });
+                runViewAction(() -> getView().onListsLoaded(result));
             }
         });
     }
@@ -44,23 +37,13 @@ public class ListsPresenter extends Presenter<ListsFragment> {
 
     void saveList(ListModel item) {
         ListService.getInstance().saveItem(item)
-                .doOnCompleted(new Action0() {
-                    @Override
-                    public void call() {
-                        loadLists();
-                    }
-                })
+                .doOnCompleted(() -> loadLists())
                 .subscribe(new SimpleRxSubscriber<ListModel>());
     }
 
     void deleteList(ListModel item) {
         ListService.getInstance().deleteItem(item)
-                .doOnCompleted(new Action0() {
-                    @Override
-                    public void call() {
-                        loadLists();
-                    }
-                })
+                .doOnCompleted(() -> loadLists())
                 .subscribe(new SimpleRxSubscriber<Void>());
     }
 

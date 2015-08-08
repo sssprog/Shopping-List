@@ -142,31 +142,23 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> {
         View view = stateSwitcher.inflateStateView(R.layout.list_empty_state);
         Button button = (Button) view.findViewById(R.id.addItemsButton);
         ViewCompat.setBackgroundTintList(button, getResources().getColorStateList(R.color.accent_button));
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addItems();
-            }
-        });
+        button.setOnClickListener(v -> addItems());
         stateSwitcher.addViewState(ViewStateSwitcher.STATE_EMPTY, view);
     }
 
     private void setupNavigationView() {
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_open, R.string.navigation_close);
         drawerLayout.setDrawerListener(drawerToggle);
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.settings:
-                        startActivity(new Intent(MainActivity.this, SettingsActivity.class));
-                        break;
-                    default:
-                        listsFragment.onNavigationItemSelected(item);
-                }
-                drawerLayout.closeDrawer(GravityCompat.START);
-                return true;
+        navigationView.setNavigationItemSelectedListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.settings:
+                    startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+                    break;
+                default:
+                    listsFragment.onNavigationItemSelected(item);
             }
+            drawerLayout.closeDrawer(GravityCompat.START);
+            return true;
         });
     }
 

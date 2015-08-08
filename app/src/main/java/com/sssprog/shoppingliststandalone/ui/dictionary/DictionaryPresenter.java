@@ -20,12 +20,7 @@ public class DictionaryPresenter<Model extends ModelWithId & ModelWithName> exte
         service.getAll().subscribe(new SimpleRxSubscriber<List<Model>>() {
             @Override
             public void onNext(final List<Model> items) {
-                runViewAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        getView().onItemsLoaded(items);
-                    }
-                });
+                runViewAction(() -> getView().onItemsLoaded(items));
             }
         });
     }

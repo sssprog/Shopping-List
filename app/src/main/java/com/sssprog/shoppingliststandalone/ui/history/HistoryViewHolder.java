@@ -34,19 +34,11 @@ public class HistoryViewHolder extends RecyclerView.ViewHolder {
         dividersMaxDistance = view.getResources().getDimension(R.dimen.history_swipe_to_delete_show_dividers_distance);
         ViewUtils.setBackground(container, ViewUtils.makeTouchFeedbackDrawable(view.getContext(), Color.WHITE));
         this.listener = itemListener;
-        container.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                checkbox.toggle();
-                listener.onClick(getAdapterPosition());
-            }
+        container.setOnClickListener(v -> {
+            checkbox.toggle();
+            listener.onClick(getAdapterPosition());
         });
-        container.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                return listener.onLongClick(getAdapterPosition());
-            }
-        });
+        container.setOnLongClickListener(v -> listener.onLongClick(getAdapterPosition()));
     }
 
     public void move(float dx) {

@@ -5,8 +5,7 @@ import android.support.design.widget.NavigationView;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
+import com.annimon.stream.Stream;
 import com.sssprog.shoppingliststandalone.R;
 import com.sssprog.shoppingliststandalone.api.database.ListModel;
 import com.sssprog.shoppingliststandalone.dialogs.AlertDialogFragment;
@@ -146,12 +145,10 @@ public class ListsFragment extends BaseMvpFragment<ListsPresenter> implements
     }
 
     public ListModel getCurrentList() {
-        return Iterables.find(items, new Predicate<ListModel>() {
-            @Override
-            public boolean apply(ListModel item) {
-                return item.getId() == Prefs.getLong(R.string.pref_current_list_id);
-            }
-        }, !items.isEmpty() ? items.get(0) : null);
+        return Stream.of(items)
+                .filter(item -> item.getId() == Prefs.getLong(R.string.pref_current_list_id))
+                .findFirst()
+                .orElse(!items.isEmpty() ? items.get(0) : null);
     }
 
     private void removeListMenuItems() {

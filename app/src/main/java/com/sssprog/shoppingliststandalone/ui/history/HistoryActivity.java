@@ -17,7 +17,6 @@ import android.text.Editable;
 import android.text.Html;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,8 +26,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
 import com.sssprog.shoppingliststandalone.R;
@@ -95,13 +92,10 @@ public class HistoryActivity extends BaseMvpActivity<HistoryPresenter> {
         HashSet<Long> selectedItems = savedInstanceState != null ?
                 (HashSet<Long>) savedInstanceState.getSerializable(PARAM_SELECTED_ITEMS) :
                 new HashSet<Long>();
-        adapter = new HistoryAdapter(this, selectedItems, new HistoryAdapter.HistoryAdapterListener() {
-            @Override
-            public boolean onItemLongClick(ItemModel item) {
-                startActivityForResult(ItemEditorActivity.createIntent(HistoryActivity.this, item.getId(), true),
-                        REQUEST_EDIT_ITEM);
-                return true;
-            }
+        adapter = new HistoryAdapter(this, selectedItems, item -> {
+            startActivityForResult(ItemEditorActivity.createIntent(HistoryActivity.this, item.getId(), true),
+                    REQUEST_EDIT_ITEM);
+            return true;
         });
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
@@ -130,12 +124,7 @@ public class HistoryActivity extends BaseMvpActivity<HistoryPresenter> {
         addItemText = (TextView) view.findViewById(R.id.label);
         Button button = (Button) view.findViewById(R.id.addItemButton);
         ViewCompat.setBackgroundTintList(button, getResources().getColorStateList(R.color.accent_button));
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addItemToList();
-            }
-        });
+        button.setOnClickListener(v -> addItemToList());
         stateSwitcher.addViewState(STATE_ADD_ITEM, view);
     }
 
@@ -188,12 +177,9 @@ public class HistoryActivity extends BaseMvpActivity<HistoryPresenter> {
 
     private void initNewItemView() {
         newItemView.setImeActionLabel(null, EditorInfo.IME_ACTION_DONE);
-        newItemView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                addItemToList();
-                return true;
-            }
+        newItemView.setOnEditorActionListener((v, actionId, event) -> {
+            addItemToList();
+            return true;
         });
         newItemView.addTextChangedListener(new TextWatcher() {
             @Override
@@ -214,12 +200,7 @@ public class HistoryActivity extends BaseMvpActivity<HistoryPresenter> {
         });
         clearTextButton.setImageDrawable(ViewUtils.getGreyIconDrawable(this, R.drawable.ic_close_white_24dp));
         updateClearTextButton();
-        clearTextButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                newItemView.setText("");
-            }
-        });
+        clearTextButton.setOnClickListener(v -> newItemView.setText(""));
         if (!isSpeechRecognitionAvailable()) {
             micButton.setVisibility(View.GONE);
         }
@@ -239,12 +220,7 @@ public class HistoryActivity extends BaseMvpActivity<HistoryPresenter> {
 
     private boolean isNewItem() {
         final String text = newItemView.getText().toString().trim().toLowerCase();
-        boolean inHistory = Iterables.any(history, new Predicate<ItemModel>() {
-            @Override
-            public boolean apply(ItemModel input) {
-                return text.equals(input.getName().toLowerCase());
-            }
-        });
+        boolean inHistory = Iterables.any(history, input -> text.equals(input.getName().toLowerCase()));
         return !inHistory && !listItems.contains(text);
     }
 
@@ -281,37 +257,18 @@ public class HistoryActivity extends BaseMvpActivity<HistoryPresenter> {
     }
 
     private void addItems() {
-        Collection<ItemModel> items = Collections2.filter(history, new Predicate<ItemModel>() {
-            @Override
-            public boolean apply(ItemModel input) {
-                return adapter.getSelectedItems().contains(input.getId());
-            }
-        });
+        Collection<ItemModel> items = Collections2.filter(history,
+                input -> adapter.getSelectedItems().contains(input.getId()));
         getPresenter().addItemsToList(items);
     }
 
     void onItemsLoaded(List<ItemModel> history, List<ItemModel> itemsInList) {
         this.listItems.clear();
-        this.listItems.addAll(Collections2.transform(itemsInList, new Function<ItemModel, String>() {
-            @Override
-            public String apply(ItemModel input) {
-                return input.getName().toLowerCase();
-            }
-        }));
+        this.listItems.addAll(Collections2.transform(itemsInList, input -> input.getName().toLowerCase()));
         this.history.clear();
-        this.history.addAll(Collections2.filter(history, new Predicate<ItemModel>() {
-            @Override
-            public boolean apply(ItemModel input) {
-                return !listItems.contains(input.getName().toLowerCase());
-            }
-        }));
+        this.history.addAll(Collections2.filter(history, input -> !listItems.contains(input.getName().toLowerCase())));
         existingItemNames.clear();
-        existingItemNames.addAll(Collections2.transform(history, new Function<ItemModel, String>() {
-            @Override
-            public String apply(ItemModel input) {
-                return input.getName().toLowerCase();
-            }
-        }));
+        existingItemNames.addAll(Collections2.transform(history, input -> input.getName().toLowerCase()));
         sortHistory();
         updateList();
     }

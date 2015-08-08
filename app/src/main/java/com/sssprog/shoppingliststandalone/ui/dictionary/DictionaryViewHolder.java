@@ -31,12 +31,7 @@ public class DictionaryViewHolder extends RecyclerView.ViewHolder {
         dividersMaxDistance = view.getResources().getDimension(R.dimen.history_swipe_to_delete_show_dividers_distance);
         ViewUtils.setBackground(container, ViewUtils.makeTouchFeedbackDrawable(view.getContext(), Color.WHITE));
         this.listener = itemListener;
-        container.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                return listener.onItemLongClick(getAdapterPosition());
-            }
-        });
+        container.setOnLongClickListener(v -> listener.onItemLongClick(getAdapterPosition()));
     }
 
     public void move(float dx) {

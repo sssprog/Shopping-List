@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
@@ -66,24 +65,14 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     }
 
     public List<ItemModel> removeCrossedItems() {
-        List<ItemModel> crossedItems = new ArrayList<>(Collections2.filter(listItems, new Predicate<ItemModel>() {
-            @Override
-            public boolean apply(ItemModel input) {
-                return input.isStruckOut();
-            }
-        }));
+        List<ItemModel> crossedItems = new ArrayList<>(Collections2.filter(listItems, input -> input.isStruckOut()));
         listItems.removeAll(crossedItems);
         update();
         return crossedItems;
     }
 
     public boolean hasCrossedItems() {
-        return Iterables.any(listItems, new Predicate<ItemModel>() {
-            @Override
-            public boolean apply(ItemModel input) {
-                return input.isStruckOut();
-            }
-        });
+        return Iterables.any(listItems, input -> input.isStruckOut());
     }
 
     @Override

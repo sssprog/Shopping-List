@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.sssprog.shoppingliststandalone.R;
 import com.sssprog.shoppingliststandalone.api.database.ModelWithId;
@@ -53,12 +52,7 @@ public class DictionaryAdapter<Model extends ModelWithId & ModelWithName>
     }
 
     public Model getItem(final long itemId) {
-        return Iterables.find(items, new Predicate<Model>() {
-            @Override
-            public boolean apply(Model input) {
-                return input.getId() == itemId;
-            }
-        }, null);
+        return Iterables.find(items, input -> input.getId() == itemId, null);
     }
 
     @Override

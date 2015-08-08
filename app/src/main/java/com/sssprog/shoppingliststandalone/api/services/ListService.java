@@ -23,51 +23,48 @@ public class ListService {
     }
 
     public Observable<List<ListModel>> getAll() {
-        return Observable.create(new Observable.OnSubscribe<List<ListModel>>() {
-            @Override
-            public void call(final Subscriber<? super List<ListModel>> subscriber) {
-                DatabaseUtils.executeWithRuntimeException(new DatabaseUtils.DatabaseTask() {
+        return Observable
+                .create(new Observable.OnSubscribe<List<ListModel>>() {
                     @Override
-                    public void execute() throws Exception {
-                        subscriber.onNext(DatabaseHelper.getInstance().getListDao().queryForAll());
-                        subscriber.onCompleted();
+                    public void call(final Subscriber<? super List<ListModel>> subscriber) {
+                        DatabaseUtils.executeWithRuntimeException(() -> {
+                            subscriber.onNext(DatabaseHelper.getInstance().getListDao().queryForAll());
+                            subscriber.onCompleted();
+                        });
                     }
-                });
-            }
-        }).subscribeOn(Api.scheduler())
+                })
+                .subscribeOn(Api.scheduler())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
     public Observable<ListModel> saveItem(final ListModel item) {
-        return Observable.create(new Observable.OnSubscribe<ListModel>() {
-            @Override
-            public void call(final Subscriber<? super ListModel> subscriber) {
-                DatabaseUtils.executeWithRuntimeException(new DatabaseUtils.DatabaseTask() {
+        return Observable
+                .create(new Observable.OnSubscribe<ListModel>() {
                     @Override
-                    public void execute() throws Exception {
-                        DatabaseHelper.getInstance().getListDao().createOrUpdate(item);
-                        subscriber.onNext(item);
-                        subscriber.onCompleted();
+                    public void call(final Subscriber<? super ListModel> subscriber) {
+                        DatabaseUtils.executeWithRuntimeException(() -> {
+                            DatabaseHelper.getInstance().getListDao().createOrUpdate(item);
+                            subscriber.onNext(item);
+                            subscriber.onCompleted();
+                        });
                     }
-                });
-            }
-        }).subscribeOn(Api.scheduler())
+                })
+                .subscribeOn(Api.scheduler())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
     public Observable<Void> deleteItem(final ListModel item) {
-        return Observable.create(new Observable.OnSubscribe<Void>() {
-            @Override
-            public void call(final Subscriber<? super Void> subscriber) {
-                DatabaseUtils.executeWithRuntimeException(new DatabaseUtils.DatabaseTask() {
+        return Observable
+                .create(new Observable.OnSubscribe<Void>() {
                     @Override
-                    public void execute() throws Exception {
-                        DatabaseHelper.getInstance().getListDao().delete(item);
-                        subscriber.onCompleted();
+                    public void call(final Subscriber<? super Void> subscriber) {
+                        DatabaseUtils.executeWithRuntimeException(() -> {
+                            DatabaseHelper.getInstance().getListDao().delete(item);
+                            subscriber.onCompleted();
+                        });
                     }
-                });
-            }
-        }).subscribeOn(Api.scheduler())
+                })
+                .subscribeOn(Api.scheduler())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 

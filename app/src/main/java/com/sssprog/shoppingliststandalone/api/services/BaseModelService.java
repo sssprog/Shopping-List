@@ -3,12 +3,10 @@ package com.sssprog.shoppingliststandalone.api.services;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.j256.ormlite.dao.Dao;
 import com.sssprog.shoppingliststandalone.api.Api;
 import com.sssprog.shoppingliststandalone.api.SimpleRxSubscriber;
-import com.sssprog.shoppingliststandalone.api.database.CategoryModel;
 import com.sssprog.shoppingliststandalone.utils.DatabaseUtils;
 
 import java.sql.SQLException;
@@ -37,13 +35,10 @@ public abstract class BaseModelService<T> implements ModelService<T>, ModelQuery
         return Observable.create(new Observable.OnSubscribe<T>() {
             @Override
             public void call(final Subscriber<? super T> subscriber) {
-                DatabaseUtils.executeWithRuntimeException(new DatabaseUtils.DatabaseTask() {
-                    @Override
-                    public void execute() throws Exception {
-                        getDao().createOrUpdate(item);
-                        subscriber.onNext(item);
-                        subscriber.onCompleted();
-                    }
+                DatabaseUtils.executeWithRuntimeException(() -> {
+                    getDao().createOrUpdate(item);
+                    subscriber.onNext(item);
+                    subscriber.onCompleted();
                 });
             }
         }).subscribeOn(Api.scheduler())
@@ -55,12 +50,9 @@ public abstract class BaseModelService<T> implements ModelService<T>, ModelQuery
         return Observable.create(new Observable.OnSubscribe<Void>() {
             @Override
             public void call(final Subscriber<? super Void> subscriber) {
-                DatabaseUtils.executeWithRuntimeException(new DatabaseUtils.DatabaseTask() {
-                    @Override
-                    public void execute() throws Exception {
-                        getDao().delete(item);
-                        subscriber.onCompleted();
-                    }
+                DatabaseUtils.executeWithRuntimeException(() -> {
+                    getDao().delete(item);
+                    subscriber.onCompleted();
                 });
             }
         }).subscribeOn(Api.scheduler())
@@ -92,36 +84,29 @@ public abstract class BaseModelService<T> implements ModelService<T>, ModelQuery
 
     @Override
     public boolean cancelDeletion(final T item) {
-        return Iterables.removeIf(deletedItems, new Predicate<DeletedItem<T>>() {
-            @Override
-            public boolean apply(DeletedItem<T> input) {
-                return input.item.equals(item);
-            }
-        });
+        return Iterables.removeIf(deletedItems, input -> input.item.equals(item));
     }
 
     @Override
     public void finishDeletion() {
         for (DeletedItem<T> item : deletedItems) {
-            delete(item.item).subscribe(new SimpleRxSubscriber<Void>());;
+            delete(item.item).subscribe(new SimpleRxSubscriber<Void>());
         }
         deletedItems.clear();
     }
 
     @Override
     public Observable<List<T>> getAll() {
-        return Observable.create(new Observable.OnSubscribe<List<T>>() {
-            @Override
-            public void call(final Subscriber<? super List<T>> subscriber) {
-                DatabaseUtils.executeWithRuntimeException(new DatabaseUtils.DatabaseTask() {
+        return Observable
+                .create(new Observable.OnSubscribe<List<T>>() {
                     @Override
-                    public void execute() throws Exception {
-                        subscriber.onNext(getDao().queryForAll());
-                        subscriber.onCompleted();
+                    public void call(final Subscriber<? super List<T>> subscriber) {
+                        DatabaseUtils.executeWithRuntimeException(() -> {
+                            subscriber.onNext(getDao().queryForAll());
+                            subscriber.onCompleted();
+                        });
                     }
-                });
-            }
-        }).subscribeOn(Api.scheduler())
+                }).subscribeOn(Api.scheduler())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 }

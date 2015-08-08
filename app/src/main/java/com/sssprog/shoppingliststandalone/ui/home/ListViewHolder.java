@@ -29,18 +29,8 @@ public class ListViewHolder extends RecyclerView.ViewHolder {
         root = view;
         ViewUtils.setBackground(container, ViewUtils.makeTouchFeedbackDrawable(view.getContext(), Color.WHITE));
         this.listener = itemListener;
-        container.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.onClick(getAdapterPosition());
-            }
-        });
-        container.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                return listener.onLongClick(getAdapterPosition());
-            }
-        });
+        container.setOnClickListener(v -> listener.onClick(getAdapterPosition()));
+        container.setOnLongClickListener(v -> listener.onLongClick(getAdapterPosition()));
     }
 
     public void move(float dx) {

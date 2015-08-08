@@ -16,7 +16,6 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.sssprog.shoppingliststandalone.R;
 import com.sssprog.shoppingliststandalone.api.database.CategoryModel;
@@ -186,23 +185,20 @@ public class ItemEditorActivity extends BaseMvpActivity<ItemEditorPresenter> {
         quantityMinusButton.setOnClickListener(plusMinusClickListener);
         quantityPlusButton.setOnClickListener(plusMinusClickListener);
 
-        View.OnTouchListener touchListener = new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        quantityRunnable.quantityDelta = (BigDecimal) v.getTag();
-                        handler.postDelayed(quantityRunnable, DELAY_BEFORE_STARTING_CONTINUES_QUANTITY_CHANGE);
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        handler.removeCallbacks(quantityRunnable);
-                        break;
-                    case MotionEvent.ACTION_CANCEL:
-                        handler.removeCallbacks(quantityRunnable);
-                        break;
-                }
-                return false;
+        View.OnTouchListener touchListener = (v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    quantityRunnable.quantityDelta = (BigDecimal) v.getTag();
+                    handler.postDelayed(quantityRunnable, DELAY_BEFORE_STARTING_CONTINUES_QUANTITY_CHANGE);
+                    break;
+                case MotionEvent.ACTION_UP:
+                    handler.removeCallbacks(quantityRunnable);
+                    break;
+                case MotionEvent.ACTION_CANCEL:
+                    handler.removeCallbacks(quantityRunnable);
+                    break;
             }
+            return false;
         };
         quantityMinusButton.setOnTouchListener(touchListener);
         quantityPlusButton.setOnTouchListener(touchListener);
@@ -328,12 +324,7 @@ public class ItemEditorActivity extends BaseMvpActivity<ItemEditorPresenter> {
     }
 
     private <T extends ModelWithId> int findPosition(List<T> list, final long id) {
-        return Iterables.indexOf(list, new Predicate<T>() {
-            @Override
-            public boolean apply(T input) {
-                return input.getId() == id;
-            }
-        });
+        return Iterables.indexOf(list, input -> input.getId() == id);
     }
 
     @OnClick(R.id.editQuantityUnitsButton)

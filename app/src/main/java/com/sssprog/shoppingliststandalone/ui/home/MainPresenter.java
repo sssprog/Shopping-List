@@ -17,12 +17,9 @@ public class MainPresenter extends Presenter<MainActivity> {
         ItemService.getInstance().getListItems(listId).subscribe(new SimpleRxSubscriber<List<ItemModel>>() {
             @Override
             public void onNext(final List<ItemModel> items) {
-                runViewAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (lastListId == listId) {
-                            getView().onItemsLoaded(items);
-                        }
+                runViewAction(() -> {
+                    if (lastListId == listId) {
+                        getView().onItemsLoaded(items);
                     }
                 });
             }
